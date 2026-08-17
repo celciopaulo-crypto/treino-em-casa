@@ -2,7 +2,7 @@
   "name": "Treino em Casa — 28 Dias",
   "short_name": "Treino 28D",
   "description": "Programa de 28 dias de calistenia para emagrecimento, com vídeos e dicas de alimentação adaptadas a Angola.",
-  "start_url": "treino-em-casa.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
