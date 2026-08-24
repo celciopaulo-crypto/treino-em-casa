@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Treino em Casa — 28 Dias</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0C0D10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Treino 28D">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@600;700&display=swap');
+  :root{
+    --bg:#0C0D10; --surface:#15171B; --surfaceAlt:#1B1E23; --border:#262A31;
+    --text:#F5F3EE; --textDim:#9BA0A8; --textFaint:#5C6169;
+    --accent:#E3A34E; --accentSoft:rgba(227,163,78,0.15);
+    --teal:#4FB0A5; --tealSoft:rgba(79,176,165,0.15);
+    --coral:#E2685A; --coralSoft:rgba(226,104,90,0.14);
+  }
+  * { box-sizing: border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; }
+  #root{ max-width:460px; margin:0 auto; padding:20px 20px 40px; min-height:100vh; }
+  h1,h2,h3{ font-family:'Space Grotesk',sans-serif; margin:0; }
+  button{ font-family:inherit; cursor:pointer; }
+  button:focus-visible, textarea:focus-visible, textarea:focus { outline:2px solid var(--accent); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){ * { transition:none !important; } }
+
+  .topbar{ display:flex; align-items:center; gap:12px; padding:4px 0 18px; }
+  .backbtn{ background:var(--surface); border:1px solid var(--border); border-radius:10px; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:var(--text); }
+  .title{ font-size:20px; font-weight:700; }
+
+  .progress-dots{ display:flex; gap:6px; margin-bottom:22px; }
+  .progress-dots span{ height:4px; flex:1; border-radius:2px; background:var(--border); }
+  .progress-dots span.on{ background:var(--accent); }
+
+  .label{ font-size:15px; font-weight:600; margin-bottom:14px; }
+  .label .muted{ color:var(--textFaint); font-weight:400; }
+
+  .option{ text-align:left; width:100%; padding:16px 18px; border-radius:16px; margin-bottom:10px; background:var(--surface); border:1.5px solid var(--border); display:flex; flex-direction:column; gap:4px; color:var(--text); }
+  .option.selected{ background:var(--accentSoft); border-color:var(--accent); }
+  .option .t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; }
+  .option .d{ font-size:12.5px; color:var(--textDim); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .bigpick{ padding:18px 0; border-radius:16px; background:var(--surface); border:1.5px solid var(--border); color:var(--text); font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; text-align:center; }
+  .bigpick.selected{ background:var(--accentSoft); border-color:var(--accent); }
+  .bigpick small{ display:block; font-size:12px; color:var(--textDim); font-weight:500; margin-top:4px; font-family:'Inter',sans-serif; }
+
+  .pill{ padding:10px 16px; border-radius:999px; background:var(--surface); border:1.5px solid var(--border); color:var(--text); font-size:13.5px; font-weight:600; margin:0 8px 8px 0; }
+  .pill.selected{ background:var(--accentSoft); border-color:var(--accent); }
+  .pillwrap{ display:flex; flex-wrap:wrap; }
+
+  .yesno{ flex:1; padding:14px 0; border-radius:14px; background:var(--surface); border:1.5px solid var(--border); color:var(--text); font-weight:700; }
+  .yesno.no.selected{ background:var(--accentSoft); border-color:var(--accent); }
+  .yesno.yes.selected{ background:var(--coralSoft); border-color:var(--coral); }
+
+  textarea{ width:100%; min-height:80px; border-radius:12px; padding:12px; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'Inter',sans-serif; font-size:13.5px; }
+  .numinput{ width:100%; padding:14px 12px; border-radius:12px; background:var(--surface); border:1.5px solid var(--border); color:var(--text); font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; text-align:center; }
+  .numinput:focus-visible, .numinput:focus{ outline:2px solid var(--accent); outline-offset:2px; }
+  .numinput::-webkit-outer-spin-button, .numinput::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .numinput{ -moz-appearance:textfield; }
+
+  .notice{ display:flex; gap:8px; align-items:flex-start; margin-top:14px; padding:12px; border-radius:12px; background:var(--coralSoft); }
+  .notice p{ font-size:12px; color:var(--textDim); margin:0; }
+
+  .btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px 20px; border-radius:14px; border:none; background:var(--accent); color:#1A1204; font-weight:700; font-size:15px; }
+  .btn-primary:disabled{ background:var(--surfaceAlt); color:var(--textFaint); cursor:not-allowed; }
+  .btn-primary:active:not(:disabled){ transform:scale(0.98); }
+  .btn-ghost{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:12px 20px; border-radius:14px; background:transparent; border:1px solid var(--border); color:var(--textDim); font-weight:600; font-size:14px; }
+
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:16px; }
+  .weekmap{ display:flex; gap:6px; margin-bottom:20px; }
+  .weekmap .d{ flex:1; text-align:center; padding:10px 4px; border-radius:12px; background:var(--surface); border:1.5px solid var(--border); }
+  .weekmap .d.today{ background:var(--accentSoft); border-color:var(--accent); }
+  .weekmap .d span{ font-size:10.5px; color:var(--textFaint); font-weight:700; }
+  .weekmap .d.today span{ color:var(--accent); }
+
+  .statmini{ display:flex; align-items:center; gap:6px; background:var(--surfaceAlt); padding:6px 10px; border-radius:10px; font-size:12px; color:var(--textDim); font-weight:600; text-transform:capitalize; }
+  .statrow{ display:flex; gap:14px; margin-bottom:14px; }
+
+  .chip{ display:inline-block; padding:4px 10px; border-radius:999px; font-size:11.5px; font-weight:600; background:var(--surfaceAlt); color:var(--textDim); border:1px solid var(--border); margin:0 6px 6px 0; }
+  .chip.accent{ background:var(--accentSoft); color:var(--accent); border-color:transparent; }
+
+  .exrow{ width:100%; text-align:left; display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:8px; color:var(--text); }
+  .exrow .n{ font-weight:700; font-size:14.5px; }
+  .exrow .v{ font-size:12px; color:var(--textDim); margin-top:2px; }
+  .blocktitle{ font-size:12px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:8px; }
+
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:flex-end; justify-content:center; z-index:50; }
+  .modal{ background:var(--bg); border-radius:24px 24px 0 0; max-width:460px; width:100%; max-height:88vh; overflow-y:auto; padding:20px; border:1px solid var(--border); border-bottom:none; }
+  .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .modal-video{ border-radius:16px; overflow:hidden; margin-bottom:14px; background:#000; aspect-ratio:16/9; }
+  .modal-video video, .modal-video iframe{ width:100%; height:100%; display:block; border:0; object-fit:contain; background:#000; }
+  .yt-link{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--teal); text-decoration:none; margin:-6px 0 14px; font-weight:600; }
+  .yt-link:hover{ text-decoration:underline; }
+  .statgrid{ display:flex; gap:10px; margin-bottom:14px; }
+  .statgrid div{ flex:1; background:var(--surface); border-radius:12px; padding:12px; text-align:center; }
+  .statgrid .num{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:16px; }
+  .statgrid .lb{ font-size:10.5px; color:var(--textFaint); }
+  .minilabel{ font-size:11px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; color:var(--textFaint); margin:0 0 6px; }
+  .infoblock{ margin-bottom:12px; }
+  .infoblock p.body{ font-size:13px; color:var(--textDim); margin:0; line-height:1.5; }
+  .close-x{ background:var(--surface); border:1px solid var(--border); border-radius:10px; width:32px; height:32px; color:var(--text); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+  /* ============ EXERCISE DATABASE ============ */
+  const EXERCISES = {
+    agachamento: { id:'agachamento', nome:'Agachamento livre', tipoVolume:'forca',
+      musculosPrimarios:['Quadríceps','Glúteos'], musculosSecundarios:['Isquiotibiais','Core'],
+      execucaoCorreta:'Pés à largura dos ombros. Desce como se te fosses sentar numa cadeira, joelhos alinhados com os pés, peito erguido.',
+      execucaoIncorreta:'Joelhos a cair para dentro, calcanhares a levantar do chão, costas a arredondar.',
+      errosComuns:['Joelhos para dentro','Perder a curva natural da coluna','Não descer o suficiente'],
+      respiracao:'Inspira a descer, expira a subir.', youtubeId:'P-yaD24bUE8',
+      alternativaFacil:'Agachamento apoiado numa cadeira (sentar e levantar)', alternativaDificil:'Agachamento com salto (squat jump)' },
+    flexao: { id:'flexao', nome:'Flexão de braços', tipoVolume:'forca',
+      musculosPrimarios:['Peitorais','Tríceps'], musculosSecundarios:['Ombros','Core'],
+      execucaoCorreta:'Mãos um pouco mais largas que os ombros, corpo em linha reta da cabeça aos calcanhares, desce até o peito quase tocar o chão.',
+      execucaoIncorreta:'Anca a cair ou a levantar, amplitude incompleta, cotovelos totalmente abertos a 90°.',
+      errosComuns:['Anca a cair','Não descer o suficiente','Cotovelos muito abertos'],
+      respiracao:'Inspira a descer, expira a empurrar para cima.', youtubeId:'mECzqUIDWfU',
+      alternativaFacil:'Flexão com joelhos no chão ou apoiada numa mesa/parede', alternativaDificil:'Flexão com pés elevados num degrau' },
+    prancha: { id:'prancha', nome:'Prancha', tipoVolume:'isometrico',
+      musculosPrimarios:['Core'], musculosSecundarios:['Ombros','Glúteos'],
+      execucaoCorreta:'Antebraços no chão sob os ombros, corpo em linha reta da cabeça aos calcanhares, abdómen contraído.',
+      execucaoIncorreta:'Anca elevada em "V invertido" ou anca a cair, prender a respiração.',
+      errosComuns:['Anca muito alta ou muito baixa','Prender a respiração','Pescoço tenso'],
+      respiracao:'Respiração contínua e controlada, sem prender o ar.', youtubeId:'mwlp75MS6Rg',
+      alternativaFacil:'Prancha com joelhos apoiados no chão', alternativaDificil:'Prancha com elevação alternada de perna ou braço' },
+    ponteGluteos: { id:'ponteGluteos', nome:'Ponte de glúteos', tipoVolume:'forca',
+      musculosPrimarios:['Glúteos'], musculosSecundarios:['Isquiotibiais','Core'],
+      execucaoCorreta:'Deitado de costas, joelhos dobrados, pés apoiados. Eleva a anca contraindo os glúteos até ficar em linha reta dos ombros aos joelhos.',
+      execucaoIncorreta:'Arquear demasiado a lombar, não contrair os glúteos no topo.',
+      errosComuns:['Arquear a lombar','Usar mais as costas do que os glúteos'],
+      respiracao:'Expira a subir a anca, inspira a descer.', youtubeId:'SKOMwg1JLrU',
+      alternativaFacil:'Ponte com amplitude reduzida', alternativaDificil:'Ponte unilateral (uma perna elevada)' },
+    avanco: { id:'avanco', nome:'Avanço (lunge)', tipoVolume:'forca',
+      musculosPrimarios:['Quadríceps','Glúteos'], musculosSecundarios:['Isquiotibiais','Core'],
+      execucaoCorreta:'Passo em frente, desce até ambos os joelhos formarem ~90°, joelho da frente alinhado com o tornozelo, tronco ereto.',
+      execucaoIncorreta:'Joelho da frente a ultrapassar muito a ponta do pé, tronco a inclinar para a frente.',
+      errosComuns:['Perder o equilíbrio','Joelho a cair para dentro'],
+      respiracao:'Inspira a descer, expira a subir.', youtubeId:'B7VQJiVv3xw',
+      alternativaFacil:'Avanço estático apoiado numa parede para equilíbrio', alternativaDificil:'Avanço com salto, alternando as pernas no ar' },
+    mergulhoCadeira: { id:'mergulhoCadeira', nome:'Mergulho na cadeira', tipoVolume:'forca', equipamento:['cadeira'],
+      musculosPrimarios:['Tríceps'], musculosSecundarios:['Ombros','Peitorais'],
+      execucaoCorreta:'Mãos na borda da cadeira, desce dobrando os cotovelos até ~90°, cotovelos apontam para trás.',
+      execucaoIncorreta:'Descer demasiado (stress no ombro), cotovelos muito abertos para os lados.',
+      errosComuns:['Descer demasiado','Ombros a subir junto às orelhas'],
+      respiracao:'Inspira a descer, expira a subir.', youtubeId:'gsXFaDBOppk',
+      alternativaFacil:'Pernas mais dobradas, a suportar menos peso', alternativaDificil:'Pernas estendidas ou pés elevados noutra cadeira' },
+    escalador: { id:'escalador', nome:'Escalador (mountain climber)', tipoVolume:'cardio',
+      musculosPrimarios:['Core'], musculosSecundarios:['Ombros','Pernas'],
+      execucaoCorreta:'Posição de prancha alta. Traz um joelho ao peito de cada vez, alternando rápido mas controlado.',
+      execucaoIncorreta:'Anca a subir muito, movimento descontrolado.',
+      errosComuns:['Anca muito alta','Perder a linha reta do corpo'],
+      respiracao:'Respiração ritmada com o movimento.', youtubeId:'hq_0YlyfqGM',
+      alternativaFacil:'Ritmo mais lento, sem correr', alternativaDificil:'Ritmo acelerado tipo sprint' },
+    abdominalBicicleta: { id:'abdominalBicicleta', nome:'Abdominal bicicleta', tipoVolume:'forca',
+      musculosPrimarios:['Core (oblíquos)'], musculosSecundarios:['Flexores da anca'],
+      execucaoCorreta:'Deitado de costas, mãos atrás da cabeça, leva o cotovelo ao joelho oposto alternando, como pedalar.',
+      execucaoIncorreta:'Puxar o pescoço com as mãos, movimento rápido demais sem controlo.',
+      errosComuns:['Puxar o pescoço','Pernas a tocar no chão entre repetições'],
+      respiracao:'Expira ao rodar o tronco, inspira a voltar ao centro.', youtubeId:'QtptPxZq4R8',
+      alternativaFacil:'Movimento mais lento, sem levantar os ombros do chão', alternativaDificil:'Ritmo mais rápido com pausa isométrica a meio' },
+    polichinelo: { id:'polichinelo', nome:'Polichinelo', tipoVolume:'cardio',
+      musculosPrimarios:['Corpo inteiro (cardio)'], musculosSecundarios:['Ombros','Pernas'],
+      execucaoCorreta:'Pés juntos e braços ao lado. Salta abrindo pernas e braços simultaneamente acima da cabeça, volta à posição inicial.',
+      execucaoIncorreta:'Aterrar com as pernas travadas, sem dobrar levemente os joelhos.',
+      errosComuns:['Aterrar com pernas rígidas'],
+      respiracao:'Respiração ritmada com o movimento.', youtubeId:'aknTmegKiIg',
+      alternativaFacil:'Versão sem salto (step-out lateral)', alternativaDificil:'Ritmo mais rápido' },
+    gatocamelo: { id:'gatocamelo', nome:'Gato-camelo', tipoVolume:'mobilidade', volumeTexto:'8-10 movimentos completos',
+      musculosPrimarios:['Coluna (mobilidade)'], musculosSecundarios:['Core'],
+      execucaoCorreta:'De gatas, alterna entre arquear as costas para cima (gato) e para baixo (vaca), seguindo a respiração.',
+      execucaoIncorreta:'Movimento muito rápido, sem seguir a respiração.',
+      errosComuns:['Mover só a lombar em vez da coluna toda'],
+      respiracao:'Inspira na posição vaca (costas para baixo), expira na posição gato (costas arqueadas).', youtubeId:'xyNwxiuERXc',
+      alternativaFacil:'Amplitude reduzida', alternativaDificil:'Pausa de 2-3s em cada posição extrema' },
+    alongamentoIsquios: { id:'alongamentoIsquios', nome:'Alongamento de isquiotibiais em pé', tipoVolume:'mobilidade', volumeTexto:'30s por perna',
+      musculosPrimarios:['Isquiotibiais'], musculosSecundarios:['Lombar'],
+      execucaoCorreta:'Em pé, perna à frente com o calcanhar no chão, inclina o tronco à frente a partir da anca mantendo as costas direitas.',
+      execucaoIncorreta:'Arredondar as costas para chegar mais longe.',
+      errosComuns:['Arredondar a coluna','Forçar demasiado o alongamento'],
+      respiracao:'Respiração lenta e profunda durante o alongamento.', youtubeId:'9ESpoUPqpFw',
+      alternativaFacil:'Joelho da perna da frente ligeiramente dobrado', alternativaDificil:'Perna elevada num degrau ou cadeira' },
+    birdDog: { id:'birdDog', nome:'Bird dog', tipoVolume:'forca',
+      musculosPrimarios:['Core','Lombar'], musculosSecundarios:['Glúteos','Ombros'],
+      execucaoCorreta:'De gatas, estende um braço e a perna oposta em simultâneo mantendo a anca e os ombros nivelados.',
+      execucaoIncorreta:'Rodar a anca ou os ombros, arquear a lombar.',
+      errosComuns:['Rodar a anca','Ir demasiado rápido sem controlo'],
+      respiracao:'Expira a estender braço/perna, inspira a voltar.', youtubeId:'ZdAHe9_HeEw',
+      alternativaFacil:'Só o braço ou só a perna de cada vez', alternativaDificil:'Pausa de 3-5s na extensão' },
+    agachamentoBulgaro: { id:'agachamentoBulgaro', nome:'Agachamento búlgaro', tipoVolume:'forca', equipamento:['sofa'],
+      musculosPrimarios:['Quadríceps','Glúteos'], musculosSecundarios:['Isquiotibiais','Core'],
+      execucaoCorreta:'Pé de trás apoiado no sofá, perna da frente afastada. Desce dobrando o joelho da frente até ~90°, tronco ligeiramente inclinado, joelho alinhado com o pé.',
+      execucaoIncorreta:'Pé da frente demasiado perto do sofá, joelho a cair para dentro, perder o equilíbrio.',
+      errosComuns:['Base curta demais','Joelho para dentro','Descer com as costas arqueadas'],
+      respiracao:'Inspira a descer, expira a subir.', youtubeId:'2C-uNgKwPLE',
+      alternativaFacil:'Menos amplitude ou apoiar uma mão na parede para equilíbrio', alternativaDificil:'Segurar uma mochila com peso junto ao peito' },
+    remadaMochila: { id:'remadaMochila', nome:'Remada com mochila', tipoVolume:'forca', equipamento:['mochila'],
+      musculosPrimarios:['Costas (dorsais)','Bíceps'], musculosSecundarios:['Ombros posteriores','Core'],
+      execucaoCorreta:'Enche a mochila, inclina o tronco à frente com as costas direitas, puxa a mochila em direção ao abdómen apertando as omoplatas.',
+      execucaoIncorreta:'Arredondar as costas, puxar só com os braços sem juntar as omoplatas, usar impulso.',
+      errosComuns:['Costas arqueadas','Usar balanço em vez de força','Não apertar as omoplatas'],
+      respiracao:'Expira a puxar, inspira a descer.', youtubeId:'i1insIGkHUc',
+      alternativaFacil:'Mochila mais leve ou remada a um braço apoiando a outra mão no joelho', alternativaDificil:'Mochila mais pesada e pausa de 1s no topo' },
+    puxadaToalha: { id:'puxadaToalha', nome:'Remada isométrica com toalha', tipoVolume:'isometrico', equipamento:['toalha'],
+      musculosPrimarios:['Costas (dorsais)'], musculosSecundarios:['Bíceps','Ombros posteriores'],
+      execucaoCorreta:'Inclinado à frente com as costas direitas, segura uma toalha esticada com as duas mãos e puxa para fora como se a rasgasses, apertando as omoplatas, e mantém a tensão.',
+      execucaoIncorreta:'Arredondar as costas, prender a respiração, largar a tensão a meio.',
+      errosComuns:['Perder a contração das omoplatas','Curvar a coluna','Prender a respiração'],
+      respiracao:'Respiração contínua, sem prender o ar durante a tensão.', youtubeId:'syCQdMvAuT0',
+      alternativaFacil:'Menos tensão na toalha e menos tempo', alternativaDificil:'Mais tempo sob tensão máxima' },
+    elevacaoLateral: { id:'elevacaoLateral', nome:'Elevação lateral com garrafas', tipoVolume:'forca', equipamento:['garrafas'],
+      musculosPrimarios:['Ombros (deltoide lateral)'], musculosSecundarios:['Trapézio'],
+      execucaoCorreta:'Uma garrafa com água em cada mão, braços ao lado. Eleva-os até à altura dos ombros com os cotovelos ligeiramente dobrados, desce devagar.',
+      execucaoIncorreta:'Subir acima dos ombros, usar impulso das costas, encolher os ombros.',
+      errosComuns:['Usar balanço','Encolher os ombros para as orelhas','Subir demasiado alto'],
+      respiracao:'Expira a subir, inspira a descer.', youtubeId:'nnH63icHYXY',
+      alternativaFacil:'Garrafas mais pequenas ou menos cheias', alternativaDificil:'Garrafas maiores e descida bem lenta (3s)' },
+    stepUp: { id:'stepUp', nome:'Subida ao degrau', tipoVolume:'forca', equipamento:['degrau'],
+      musculosPrimarios:['Glúteos','Quadríceps'], musculosSecundarios:['Isquiotibiais','Core'],
+      execucaoCorreta:'De frente para um degrau firme, sobe apoiando o pé todo e empurrando com o calcanhar, ergue o corpo até esticar a perna, desce controlado. Alterna as pernas.',
+      execucaoIncorreta:'Impulsionar-se com a perna de baixo, deixar o joelho cair para dentro, usar um degrau instável.',
+      errosComuns:['Empurrar com a perna de trás','Joelho para dentro','Descer sem controlo'],
+      respiracao:'Expira a subir, inspira a descer.', youtubeId:'wGoKb6mPJzU',
+      alternativaFacil:'Degrau mais baixo', alternativaDificil:'Degrau mais alto ou segurar uma mochila com peso' },
+    wallSit: { id:'wallSit', nome:'Agachamento na parede', tipoVolume:'isometrico', equipamento:['parede'],
+      musculosPrimarios:['Quadríceps'], musculosSecundarios:['Glúteos','Core'],
+      execucaoCorreta:'Costas apoiadas na parede, desliza até as coxas ficarem paralelas ao chão, joelhos a 90° por cima dos tornozelos, e mantém a posição.',
+      execucaoIncorreta:'Joelhos à frente da ponta dos pés, anca demasiado alta, prender a respiração.',
+      errosComuns:['Não descer a 90°','Joelhos a passar os pés','Prender a respiração'],
+      respiracao:'Respiração contínua e controlada durante a posição.', youtubeId:'y-wV4Venusw',
+      alternativaFacil:'Descer menos (ângulo maior nos joelhos)', alternativaDificil:'Estender uma perna de cada vez ou aguentar mais tempo' },
+    remadaInvertida: { id:'remadaInvertida', nome:'Remada invertida na mesa', tipoVolume:'forca', equipamento:['mesa'],
+      musculosPrimarios:['Costas (dorsais)','Bíceps'], musculosSecundarios:['Ombros posteriores','Core'],
+      execucaoCorreta:'Deita-te sob uma mesa bem resistente, agarra a borda com as mãos à largura dos ombros, corpo em linha reta, puxa o peito em direção à mesa apertando as omoplatas.',
+      execucaoIncorreta:'Anca a cair, puxar só com os braços, amplitude curta.',
+      errosComuns:['Usar uma mesa instável ou pouco resistente','Anca a cair','Não juntar as omoplatas'],
+      respiracao:'Expira a puxar para cima, inspira a descer.', youtubeId:'6NTruShwwKk',
+      alternativaFacil:'Joelhos dobrados com os pés no chão (menos peso)', alternativaDificil:'Pernas esticadas e pés elevados' },
+    roscaBiceps: { id:'roscaBiceps', nome:'Rosca bíceps com elástico', tipoVolume:'forca', equipamento:['elastico'],
+      musculosPrimarios:['Bíceps'], musculosSecundarios:['Antebraço'],
+      execucaoCorreta:'Pisa o meio do elástico com os pés, segura as pontas com as palmas para a frente, cotovelos junto ao tronco. Dobra os cotovelos elevando as mãos até aos ombros, desce devagar.',
+      execucaoIncorreta:'Mexer os cotovelos para a frente, usar impulso do tronco, largar a descida.',
+      errosComuns:['Cotovelos a afastar do corpo','Balançar o tronco','Descida sem controlo'],
+      respiracao:'Expira a subir, inspira a descer.', youtubeId:'RyWX9e7imhc',
+      alternativaFacil:'Elástico com menos tensão (pisar com menos elástico)', alternativaDificil:'Encurta o elástico ou pausa de 1s no topo' },
+    burpee: { id:'burpee', nome:'Burpee', tipoVolume:'cardio',
+      musculosPrimarios:['Corpo inteiro (cardio)'], musculosSecundarios:['Peitorais','Quadríceps','Core'],
+      execucaoCorreta:'Agacha, apoia as mãos no chão, salta os pés para trás até à prancha, faz (opcional) uma flexão, salta os pés de volta e salta para cima com os braços acima da cabeça.',
+      execucaoIncorreta:'Anca a cair na prancha, aterrar com as pernas travadas, perder a linha do corpo por pressa.',
+      errosComuns:['Anca a cair na prancha','Aterrar com pernas rígidas','Fazer rápido demais sem controlo'],
+      respiracao:'Expira ao subir/saltar, inspira ao descer.', youtubeId:'qLBImHhCXSw',
+      alternativaFacil:'Burpee sem salto e sem flexão (sobe e desce controlado)', alternativaDificil:'Burpee com flexão + salto mais alto' },
+    agachamentoSalto: { id:'agachamentoSalto', nome:'Agachamento com salto', tipoVolume:'cardio',
+      musculosPrimarios:['Quadríceps','Glúteos'], musculosSecundarios:['Panturrilhas','Core'],
+      execucaoCorreta:'Agacha até as coxas ficarem quase paralelas ao chão e salta explosivamente para cima, aterrando suave com os joelhos ligeiramente dobrados.',
+      execucaoIncorreta:'Aterrar com as pernas esticadas, joelhos a cair para dentro, não descer o suficiente.',
+      errosComuns:['Aterragem dura','Joelhos para dentro','Amplitude curta'],
+      respiracao:'Inspira a descer, expira a saltar.', youtubeId:'A-cFYWvaHr0',
+      alternativaFacil:'Agachamento normal sem salto', alternativaDificil:'Salto mais alto com pausa curta no fundo' },
+    joelhosAltos: { id:'joelhosAltos', nome:'Joelhos altos', tipoVolume:'cardio',
+      musculosPrimarios:['Corpo inteiro (cardio)'], musculosSecundarios:['Flexores da anca','Panturrilhas','Core'],
+      execucaoCorreta:'Corre no mesmo sítio elevando os joelhos até à altura da anca, tronco ereto e core ativo, aterrando na ponta dos pés.',
+      execucaoIncorreta:'Curvar o tronco para trás, joelhos baixos, aterrar com os calcanhares.',
+      errosComuns:['Joelhos demasiado baixos','Inclinar o tronco','Ritmo descontrolado'],
+      respiracao:'Respiração ritmada com o movimento.', youtubeId:'WofWmk-4qU4',
+      alternativaFacil:'Marcha no sítio elevando bem os joelhos (sem correr)', alternativaDificil:'Ritmo mais rápido tipo sprint' },
+    patinador: { id:'patinador', nome:'Patinador (skater)', tipoVolume:'cardio',
+      musculosPrimarios:['Glúteos','Quadríceps'], musculosSecundarios:['Adutores','Core','Panturrilhas'],
+      execucaoCorreta:'Salta lateralmente de uma perna para a outra, aterrando suave sobre a perna de apoio com a outra a cruzar atrás, tronco ligeiramente inclinado à frente.',
+      execucaoIncorreta:'Joelho da perna de apoio a cair para dentro, aterragem dura, perder o equilíbrio.',
+      errosComuns:['Joelho para dentro na aterragem','Saltos sem controlo','Tronco muito ereto'],
+      respiracao:'Respiração ritmada com o salto.', youtubeId:'AMFCdEFDkjg',
+      alternativaFacil:'Passo lateral (step) sem salto', alternativaDificil:'Saltos laterais mais amplos e rápidos' },
+    afundoSalto: { id:'afundoSalto', nome:'Afundo com salto', tipoVolume:'cardio',
+      musculosPrimarios:['Quadríceps','Glúteos'], musculosSecundarios:['Isquiotibiais','Core','Panturrilhas'],
+      execucaoCorreta:'Em posição de avanço, desce até ambos os joelhos a ~90° e salta trocando as pernas no ar, aterrando suave já na posição de avanço oposta.',
+      execucaoIncorreta:'Joelho da frente a passar muito a ponta do pé, aterragem dura, tronco a inclinar demasiado.',
+      errosComuns:['Aterragem sem controlo','Perder o equilíbrio','Joelho para dentro'],
+      respiracao:'Inspira a descer, expira a saltar.', youtubeId:'oKajsQ0kvhU',
+      alternativaFacil:'Avanço alternado sem salto', alternativaDificil:'Saltos mais altos e ritmo contínuo' },
+    pranchaToque: { id:'pranchaToque', nome:'Prancha com toque no ombro', tipoVolume:'isometrico',
+      musculosPrimarios:['Core'], musculosSecundarios:['Ombros','Peitorais'],
+      execucaoCorreta:'Em prancha alta (mãos sob os ombros), toca com uma mão no ombro oposto alternando, mantendo a anca estável sem rodar.',
+      execucaoIncorreta:'Anca a balançar de lado, anca a cair, mãos mal alinhadas com os ombros.',
+      errosComuns:['Anca a rodar','Anca a cair','Ir rápido demais'],
+      respiracao:'Respiração contínua e controlada, sem prender o ar.', youtubeId:'eT93C-xUZI8',
+      alternativaFacil:'Prancha com joelhos no chão ou pés mais afastados', alternativaDificil:'Ritmo mais lento com pausa em cada toque' },
+    escaladorCruzado: { id:'escaladorCruzado', nome:'Escalador cruzado', tipoVolume:'cardio',
+      musculosPrimarios:['Core (oblíquos)'], musculosSecundarios:['Ombros','Pernas'],
+      execucaoCorreta:'Posição de prancha alta. Leva o joelho em direção ao cotovelo oposto, alternando de forma controlada, mantendo a anca baixa.',
+      execucaoIncorreta:'Anca a subir muito, movimento sem controlo, perder a linha do corpo.',
+      errosComuns:['Anca muito alta','Movimento descontrolado','Ombros a sair da vertical'],
+      respiracao:'Respiração ritmada com o movimento.', youtubeId:'1cwZ8VZvRjc',
+      alternativaFacil:'Ritmo mais lento sem cruzar tanto', alternativaDificil:'Ritmo acelerado mantendo o controlo' },
+  };
+
+  /* Mapa id do exercício -> nome real do ficheiro de vídeo na pasta videos/
+     (permite usar os nomes descritivos que já estão na pasta, sem renomear) */
+  const VIDEO_MAP = {
+    agachamento:'Agachamento livre.mp4',
+    flexao:'Flexão de braços.mp4',
+    prancha:'Prancha.mp4',
+    ponteGluteos:'Ponte de glúteos.mp4',
+    avanco:'Avanço (lunge).mp4',
+    mergulhoCadeira:'Mergulho na cadeira (cadeira).mp4',
+    escalador:'Escalador (mountain climber).mp4',
+    abdominalBicicleta:'Abdominal Bicicleta.mp4',
+    polichinelo:'Polichinelo (aquecimentofinisher).mp4',
+    gatocamelo:'Gato-camelo (mobilidadealongamento).mp4',
+    alongamentoIsquios:'Alongamento isquiotibiais em pé.mp4',
+    birdDog:'Bird dog.mp4',
+    agachamentoBulgaro:'Agachamento búlgaro (sofá).mp4',
+    remadaMochila:'Remada com mochila (mochila).mp4',
+    puxadaToalha:'Remada isométrica com toalha (toalha).mp4',
+    elevacaoLateral:'Elevação lateral com garrafas (garrafas).mp4',
+    stepUp:'Subida ao degrau (degrau).mp4',
+    wallSit:'Agachamento na parede (parede).mp4',
+    remadaInvertida:'Remada invertida na mesa.mp4',
+    roscaBiceps:'Rosca bíceps com elástico (elástico).mp4',
+    burpee:'Burpee.mp4',
+    agachamentoSalto:'Agachamento com salto.mp4',
+    joelhosAltos:'Joelhos altos.mp4',
+    patinador:'Patinador (skater).mp4',
+    afundoSalto:'Afundo com salto.mp4',
+    pranchaToque:'Prancha com toque no ombro.mp4',
+    escaladorCruzado:'Escalador cruzado.mp4',
+  };
+
+  /* Progressão das 4 semanas do programa de 28 dias (circuito por tempo, emagrecimento) */
+  const PROGRESSAO_SEMANA = {
+    1:{ nome:'Adaptação', trabalho:40, descanso:20, voltas:2 },
+    2:{ nome:'Intensificação', trabalho:45, descanso:15, voltas:3 },
+    3:{ nome:'Pico', trabalho:50, descanso:10, voltas:4 },
+    4:{ nome:'Consolidação', trabalho:45, descanso:15, voltas:3 },
+  };
+  /* Quais dos 7 dias de cada semana são de treino (o resto é descanso) */
+  const PADRAO_DIAS = {
+    3:[true,false,true,false,true,false,false],
+    4:[true,true,false,true,true,false,false],
+    5:[true,true,false,true,true,true,false],
+  };
+  function ajusteNivel(base, nivel){
+    if (nivel === 'iniciante') return Object.assign({}, base, { descanso: base.descanso+5 });
+    if (nivel === 'avancado') return Object.assign({}, base, { descanso: Math.max(5, base.descanso-5), voltas: base.voltas+1 });
+    return Object.assign({}, base);
+  }
+  function ajusteTempo(base, tempo){
+    const map = {20:-1,30:0,40:0,45:1};
+    return Object.assign({}, base, { voltas: Math.max(1, base.voltas + (map[tempo]||0)) });
+  }
+  function rotateArr(arr, n){ if(!arr.length) return arr; const i = n % arr.length; return [...arr.slice(i), ...arr.slice(0,i)]; }
+  // Exercícios opcionais (secundários) que só entram se o equipamento estiver disponível
+  const ACESSORIOS_POR_EQUIP = {
+    cadeira:['mergulhoCadeira'], sofa:['agachamentoBulgaro'], mochila:['remadaMochila'],
+    toalha:['puxadaToalha'], garrafas:['elevacaoLateral'], degrau:['stepUp'],
+    parede:['wallSit'], mesa:['remadaInvertida'], elastico:['roscaBiceps'],
+  };
+  // Volume mostrado por exercício dentro do circuito (texto)
+  function volTexto(ex, dia, tipoBloco){
+    if (ex.tipoVolume === 'mobilidade') return ex.volumeTexto;
+    if (tipoBloco === 'aquecimento') return '~30-45s';
+    return dia.trabalho + 's trabalho · ' + dia.descanso + 's descanso';
+  }
+  function gerarPlano(perfil){
+    const principalPool = ['agachamento','flexao','avanco','ponteGluteos','burpee','agachamentoSalto','patinador','afundoSalto','escalador','pranchaToque'];
+    const finisherPool  = ['polichinelo','joelhosAltos','escaladorCruzado','agachamentoSalto','burpee'];
+    const corePool      = ['prancha','abdominalBicicleta','birdDog'];
+    const acessorioPool = [];
+    perfil.equipamento.forEach(eq => { if (ACESSORIOS_POR_EQUIP[eq]) acessorioPool.push.apply(acessorioPool, ACESSORIOS_POR_EQUIP[eq]); });
+    const padrao = PADRAO_DIAS[perfil.dias] || PADRAO_DIAS[4];
+    const nPrincipal = perfil.tempo <= 20 ? 4 : 5;
+    const dias = [];
+    let treinoIdx = 0;
+    for (let d = 0; d < 28; d++){
+      const semana = Math.floor(d/7) + 1;
+      const pos = d % 7;
+      const numero = d + 1;
+      if (!padrao[pos]) { dias.push({ numero, semana, tipo:'descanso' }); continue; }
+      const base = PROGRESSAO_SEMANA[semana];
+      const vol = ajusteTempo(ajusteNivel(base, perfil.nivel), perfil.tempo);
+      const principal = rotateArr(principalPool, treinoIdx).slice(0, nPrincipal);
+      const finisher = rotateArr(finisherPool, treinoIdx).filter(x => !principal.includes(x)).slice(0,1);
+      dias.push({
+        numero, semana, tipo:'treino', faseNome: base.nome,
+        trabalho: vol.trabalho, descanso: vol.descanso, voltas: vol.voltas,
+        aquecimento:['polichinelo','gatocamelo'],
+        principal: principal,
+        acessorios: acessorioPool.length ? rotateArr(acessorioPool, treinoIdx).slice(0,1) : [],
+        finisher: finisher,
+        core: rotateArr(corePool, treinoIdx).slice(0,2),
+        alongamento:['alongamentoIsquios','gatocamelo'],
+      });
+      treinoIdx++;
+    }
+    return dias;
+  }
+
+  const OBJETIVOS = [
+    {id:'perderGordura', label:'Perder gordura', desc:'Mais foco em cardio e densidade de treino'},
+    {id:'ganharMusculo', label:'Ganhar músculo', desc:'Mais foco em força e volume de séries'},
+    {id:'recomposicao', label:'Recomposição equilibrada', desc:'Equilíbrio entre força e cardio'},
+  ];
+  const NIVEIS = [
+    {id:'iniciante', label:'Iniciante', desc:'Pouca ou nenhuma experiência com treino'},
+    {id:'intermedio', label:'Intermédio', desc:'Treinas há alguns meses com regularidade'},
+    {id:'avancado', label:'Avançado', desc:'Treinas há anos, boa técnica e resistência'},
+  ];
+  const DIAS_OPCOES = [3,4,5];
+  const TEMPO_OPCOES = [20,30,40,45];
+  const EQUIPAMENTO_OPCOES = [
+    {id:'cadeira',label:'Cadeira'},{id:'sofa',label:'Sofá'},{id:'mochila',label:'Mochila'},
+    {id:'toalha',label:'Toalha'},{id:'garrafas',label:'Garrafas com água'},{id:'degrau',label:'Degrau'},
+    {id:'parede',label:'Parede'},{id:'mesa',label:'Mesa resistente'},{id:'elastico',label:'Elástico'},
+  ];
+
+  /* ============ ALIMENTAÇÃO (base de alimentos comuns em Angola) ============ */
+  const ALIMENTOS = {
+    proteina: { titulo:'Proteínas', sub:'constroem e mantêm o músculo, saciam', cor:'var(--accent)', itens:[
+      {n:'Peixe fresco (carapau, cachucho, garoupa, corvina)', t:'grelhado ou cozido em vez de frito'},
+      {n:'Peixe seco / carapau seco', t:'boa proteína — demolha antes para tirar sal'},
+      {n:'Frango', t:'sem pele para menos gordura; grelhado ou estufado'},
+      {n:'Ovos', t:'baratos e completos; cozidos ou mexidos com pouco óleo'},
+      {n:'Feijão', t:'proteína + fibra; enche e sustenta bem'},
+      {n:'Carne magra', t:'com moderação; retira a gordura visível'},
+      {n:'Mancarra (amendoim)', t:'proteína e gordura boa, mas calórica — só um punhado'},
+    ]},
+    hidratos: { titulo:'Hidratos (energia)', sub:'dão energia — controla a porção', cor:'var(--teal)', itens:[
+      {n:'Funge (milho ou bombó/mandioca)', t:'porção do tamanho do teu punho, não o prato cheio'},
+      {n:'Batata-doce', t:'ótima escolha; sacia e tem fibra'},
+      {n:'Banana-pão', t:'cozida melhor que frita'},
+      {n:'Mandioca / bombó', t:'energética — porção controlada'},
+      {n:'Arroz', t:'de preferência acompanhado de feijão e legumes'},
+      {n:'Pão', t:'melhor de manhã; não em todas as refeições'},
+    ]},
+    gordura: { titulo:'Gorduras', sub:'necessárias, mas muito calóricas', cor:'var(--coral)', itens:[
+      {n:'Óleo de palma (dendém)', t:'saboroso mas muito calórico — usa pouco'},
+      {n:'Óleo vegetal', t:'medir com a colher, não deitar "a olho"'},
+      {n:'Abacate', t:'gordura boa; meia peça chega'},
+      {n:'Coco / óleo de coco', t:'com conta; é denso em calorias'},
+    ]},
+    vegetais: { titulo:'Vegetais e folhas', sub:'enchem o prato com poucas calorias', cor:'var(--teal)', itens:[
+      {n:'Folhas verdes (kizaca/folha de mandioca, couve, espinafre)', t:'metade do prato'},
+      {n:'Quiabo', t:'fibra e volume, poucas calorias'},
+      {n:'Tomate, cebola, cenoura, pepino', t:'em saladas e molhos'},
+      {n:'Jindungo (com moderação)', t:'dá sabor sem calorias'},
+    ]},
+    fruta: { titulo:'Fruta', sub:'doce natural, com fibra', cor:'var(--accent)', itens:[
+      {n:'Banana', t:'boa antes do treino'},
+      {n:'Manga, papaia (mamão), ananás', t:'1 porção por vez'},
+      {n:'Laranja, goiaba, maracujá', t:'preferir a fruta inteira em vez de sumo'},
+    ]},
+  };
+
+  const NUTRI = {
+    perderGordura: {
+      titulo:'Comer para perder gordura',
+      intro:'A ideia é comer um pouco menos do que gastas, sem passar fome — mantendo a proteína alta para não perderes músculo enquanto treinas.',
+      regras:[
+        'Põe proteína em todas as refeições (peixe, frango, ovos ou feijão) — sacia e protege o músculo.',
+        'Enche metade do prato com folhas/legumes; controla a porção de funge/arroz (tamanho do punho).',
+        'Usa pouco óleo de palma e evita fritos — grelha, coze ou estufa.',
+        'Bebe água ao longo do dia; corta refrigerantes, sumos açucarados e cerveja.',
+        'Come devagar e evita repetir o prato — espera antes de te servires outra vez.',
+      ],
+      prato:'Metade do prato: folhas e legumes. Um quarto: proteína (peixe/frango/feijão). Um quarto: hidratos numa porção controlada (funge, batata-doce ou arroz). Pouco óleo.',
+      trocas:[
+        ['Refrigerante / sumo de pacote','Água, água com limão ou chá sem açúcar'],
+        ['Peixe/frango frito','Grelhado, cozido ou estufado'],
+        ['Prato cheio de funge','Porção do punho + mais folhas e legumes'],
+        ['Pão em todas as refeições','Pão só ao pequeno-almoço'],
+        ['Petiscos fritos à noite','Fruta ou um punhado de mancarra'],
+      ],
+    },
+    ganharMusculo: {
+      titulo:'Comer para ganhar músculo',
+      intro:'Para construir músculo precisas de proteína suficiente e energia que chegue — mas de comida de qualidade, não de fritos e açúcar.',
+      regras:[
+        'Proteína em todas as refeições e também depois do treino (ovos, peixe, frango, feijão).',
+        'Não tenhas medo dos hidratos bons (funge, batata-doce, arroz, banana) — são o combustível do treino.',
+        'Acrescenta calorias com qualidade: mancarra, ovos, abacate, feijão.',
+        'Come com regularidade ao longo do dia, sem saltar refeições.',
+        'Água suficiente e bom sono — o músculo cresce no descanso.',
+      ],
+      prato:'Um terço de proteína (peixe/frango/ovos/feijão), um terço de hidratos (funge, batata-doce ou arroz), um terço de legumes. Fruta e mancarra entre refeições.',
+      trocas:[
+        ['Saltar refeições','Comer de 3 em 3 horas mais ou menos'],
+        ['Só hidratos no prato','Juntar sempre uma fonte de proteína'],
+        ['Doces e fritos para "encher"','Ovos, feijão, mancarra, abacate'],
+      ],
+    },
+    recomposicao: {
+      titulo:'Comer para recomposição (perder gordura e ganhar músculo)',
+      intro:'Aqui procuras o equilíbrio: proteína alta sempre, energia moderada — perder gordura devagar enquanto ganhas ou manténs músculo.',
+      regras:[
+        'Prioridade nº1: proteína em todas as refeições.',
+        'Legumes/folhas em abundância; hidratos em porção moderada (mais nos dias de treino).',
+        'Gorduras com conta (pouco óleo de palma, fritos raros).',
+        'Água em vez de bebidas açucaradas; álcool só ocasional.',
+        'Regista o peso ~1x por semana e ajusta as porções conforme a evolução.',
+      ],
+      prato:'Metade legumes/folhas, um quarto proteína, um quarto hidratos. Um pouco mais de hidratos nos dias de treino, menos nos dias de descanso.',
+      trocas:[
+        ['Bebidas açucaradas','Água ou chá sem açúcar'],
+        ['Fritos','Grelhados, cozidos ou estufados'],
+        ['Porção grande de funge todos os dias','Ajustar a porção ao dia (treino vs descanso)'],
+      ],
+    },
+  };
+
+  /* ============ STORAGE (usa window.storage aqui no protótipo; cai para localStorage se hospedares isto fora do Claude) ============ */
+  const storage = {
+    async get(key){
+      if (window.storage) { try { const r = await window.storage.get(key, false); return r ? r.value : null; } catch(e){ return null; } }
+      return localStorage.getItem(key);
+    },
+    async set(key, value){
+      if (window.storage) { try { await window.storage.set(key, value, false); return; } catch(e){} }
+      localStorage.setItem(key, value);
+    },
+    async remove(key){
+      if (window.storage) { try { await window.storage.delete(key, false); return; } catch(e){} }
+      localStorage.removeItem(key);
+    }
+  };
+
+  /* ============ STATE ============ */
+  let state = {
+    screen: 'loading',
+    perfil: null, programa: null, progresso: { diaIndex:0, concluidos: [], dataInicio:null },
+    pesoHistorico: [],
+    obStep: 0,
+    respostas: { objetivo:null, nivel:null, dias:null, tempo:null, equipamento:[], limitacoes:null, limitacoesTexto:'', pesoAtual:null, pesoAlvo:null },
+    exercicioAberto: null,
+    timerCfg: { mode:'personalizado', trabalho:40, descanso:20, series:8, prep:10, exerciciosTexto:'' },
+    timerPrefs: { somFase:true, contagem3s:true, voz:true, vibracao:true },
+    timer: null,
+  };
+  function setState(patch){ state = Object.assign({}, state, patch); render(); }
+
+  async function init(){
+    try {
+      const p = await storage.get('perfil');
+      const pr = await storage.get('programa');
+      const prog = await storage.get('progresso');
+      const ph = await storage.get('pesoHistorico');
+      const tc = await storage.get('timerCfg');
+      const tp = await storage.get('timerPrefs');
+      if (tc) { try { state.timerCfg = Object.assign({}, state.timerCfg, JSON.parse(tc)); } catch(e){} }
+      if (tp) { try { state.timerPrefs = Object.assign({}, state.timerPrefs, JSON.parse(tp)); } catch(e){} }
+      if (p) {
+        state.perfil = JSON.parse(p);
+        if (ph) state.pesoHistorico = JSON.parse(ph);
+        const programa = pr ? JSON.parse(pr) : null;
+        if (programa && programa.length === 28) {
+          state.programa = programa;
+          if (prog) { const g = JSON.parse(prog); state.progresso = { diaIndex: g.diaIndex||0, concluidos: g.concluidos||[], dataInicio: g.dataInicio||null }; }
+        } else {
+          // utilizador antigo (formato pré-28-dias): regenera o programa, mantém o peso
+          state.programa = gerarPlano(state.perfil);
+          state.progresso = { diaIndex:0, concluidos:[], dataInicio: new Date().toISOString() };
+          await salvarTudo();
+        }
+        state.screen = 'dashboard';
+      } else {
+        state.screen = 'onboarding';
+      }
+    } catch(e) { state.screen = 'onboarding'; }
+    render();
+  }
+
+  async function salvarTudo(){
+    await storage.set('perfil', JSON.stringify(state.perfil));
+    await storage.set('programa', JSON.stringify(state.programa));
+    await storage.set('progresso', JSON.stringify(state.progresso));
+    await storage.set('pesoHistorico', JSON.stringify(state.pesoHistorico));
+  }
+
+  /* Dia atual do programa (0..27) e objeto correspondente */
+  function diaAtualIndex(){ return Math.min(state.progresso.diaIndex, 27); }
+  function diaAtualObj(){ return state.programa[diaAtualIndex()]; }
+  function programaConcluido(){ return state.progresso.diaIndex >= 28; }
+
+  /* ============ ICONS (inline SVG, minimal) ============ */
+  const ICON = {
+    back: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>',
+    check: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>',
+    play: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+    chevron: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>',
+    info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
+    x: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+    clock: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+    flame: '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s-5 5.5-5 10a5 5 0 0010 0c0-1-.3-2-.9-3 .1 1.6-1 2.5-1 2.5.3-2.5-1.5-4-1.5-4S12 9 12 2z"/></svg>',
+    dumbbell: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7v10M18 7v10M2 10v4M22 10v4M6 12h12"/></svg>',
+    leaf: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>',
+    pause: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
+  };
+
+  /* ============ CRONÓMETRO ============ */
+  const timerEngine = { intervalId:null, audioCtx:null, wakeLock:null };
+
+  function beep(freq, duration, vol){
+    try {
+      if (!timerEngine.audioCtx) timerEngine.audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      const ctx = timerEngine.audioCtx;
+      if (ctx.state === 'suspended') ctx.resume();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.frequency.value = freq; osc.type = 'sine';
+      osc.connect(gain); gain.connect(ctx.destination);
+      const now = ctx.currentTime;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(vol||0.3, now+0.015);
+      gain.gain.linearRampToValueAtTime(0.0001, now+duration);
+      osc.start(now); osc.stop(now+duration+0.03);
+    } catch(e){}
+  }
+  function vibrar(pattern){ try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e){} }
+  function falar(texto){
+    try {
+      if (!('speechSynthesis' in window)) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(texto);
+      u.lang = 'pt-PT'; u.rate = 1.03;
+      speechSynthesis.speak(u);
+    } catch(e){}
+  }
+  function requestWakeLock(){
+    try {
+      if ('wakeLock' in navigator) {
+        navigator.wakeLock.request('screen').then(function(wl){ timerEngine.wakeLock = wl; }).catch(function(){});
+      }
+    } catch(e){}
+  }
+  function releaseWakeLock(){
+    try { if (timerEngine.wakeLock) { timerEngine.wakeLock.release(); timerEngine.wakeLock = null; } } catch(e){}
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible' && state.timer && state.timer.running && state.timer.mode !== undefined) requestWakeLock();
+  });
+
+  function fmtTime(totalSeconds){
+    const s = Math.max(0, Math.round(totalSeconds));
+    const m = Math.floor(s/60), r = s%60;
+    return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+  }
+
+  /* Constrói a sequência de fases do cronómetro guiado a partir do dia atual do programa (aquece, circuitos com voltas, core, alongamento) */
+  function buildGuidedPhases(dia){
+    const phases = [];
+    phases.push({ kind:'prep', label:'Prepara-te', duracao:10, round:0, totalRounds:0, bloco:'Aquecimento' });
+    (dia.aquecimento||[]).forEach((exId, i) => {
+      phases.push({ kind:'trabalho', label:EXERCISES[exId].nome, duracao:40, round:1, totalRounds:1, exId, bloco:'Aquecimento' });
+      if (i < dia.aquecimento.length-1) phases.push({ kind:'descanso', label:'Transição', duracao:10, round:1, totalRounds:1, bloco:'Aquecimento' });
+    });
+    function addCircuito(lista, blocoNome, voltas){
+      if (!lista || !lista.length) return;
+      for (let r=1; r<=voltas; r++){
+        lista.forEach((exId) => {
+          phases.push({ kind:'trabalho', label:EXERCISES[exId].nome, duracao:dia.trabalho, round:r, totalRounds:voltas, exId, bloco:blocoNome });
+          phases.push({ kind:'descanso', label:'Descanso', duracao:dia.descanso, round:r, totalRounds:voltas, bloco:blocoNome });
+        });
+      }
+    }
+    addCircuito(dia.principal, 'Parte principal', dia.voltas);
+    addCircuito(dia.acessorios, 'Acessórios', dia.voltas);
+    addCircuito(dia.finisher, 'Finisher cardio', dia.voltas);
+    addCircuito(dia.core, 'Core', 1);
+    (dia.alongamento||[]).forEach((exId, i) => {
+      phases.push({ kind:'trabalho', label:EXERCISES[exId].nome, duracao:30, round:1, totalRounds:1, exId, bloco:'Alongamento' });
+      if (i < dia.alongamento.length-1) phases.push({ kind:'descanso', label:'Transição', duracao:5, round:1, totalRounds:1, bloco:'Alongamento' });
+    });
+    while (phases.length && phases[phases.length-1].kind === 'descanso') phases.pop();
+    return phases;
+  }
+
+  /* Constrói a sequência de fases dos modos personalizado/tabata */
+  function buildCustomPhases(cfg){
+    const trabalho = cfg.mode === 'tabata' ? 20 : Math.max(5, cfg.trabalho||40);
+    const descanso = cfg.mode === 'tabata' ? 10 : Math.max(0, cfg.descanso||0);
+    const series = cfg.mode === 'tabata' ? 8 : Math.max(1, cfg.series||1);
+    const exList = (cfg.exerciciosTexto||'').split('\n').map(function(s){ return s.trim(); }).filter(Boolean);
+    const phases = [];
+    const prep = Math.max(0, cfg.prep||0);
+    if (prep > 0) phases.push({ kind:'prep', label:'Prepara-te', duracao:prep, round:0, totalRounds:series, bloco:'Cronómetro' });
+    for (let r=1; r<=series; r++){
+      const label = exList.length ? exList[(r-1) % exList.length] : ('Série '+r);
+      phases.push({ kind:'trabalho', label:label, duracao:trabalho, round:r, totalRounds:series, bloco:'Cronómetro' });
+      if (r < series) phases.push({ kind:'descanso', label:'Descanso', duracao:descanso, round:r, totalRounds:series, bloco:'Cronómetro' });
+    }
+    return phases;
+  }
+
+  function onPhaseChange(ph, isFinish){
+    const prefs = state.timerPrefs;
+    if (isFinish) {
+      if (prefs.somFase) { beep(660,0.15,0.35); setTimeout(function(){ beep(880,0.28,0.35); }, 170); }
+      if (prefs.vibracao) vibrar([200,100,200,100,300]);
+      if (prefs.voz) falar('Cronómetro terminado. Bom trabalho!');
+      return;
+    }
+    if (prefs.somFase) {
+      if (ph.kind === 'trabalho') beep(880, 0.18, 0.35);
+      else if (ph.kind === 'descanso') beep(440, 0.18, 0.28);
+      else beep(660, 0.15, 0.3);
+    }
+    if (prefs.vibracao) vibrar(ph.kind === 'trabalho' ? [150] : [70,60,70]);
+    if (prefs.voz) {
+      let texto;
+      if (ph.kind === 'prep') texto = 'Prepara-te';
+      else if (ph.kind === 'trabalho') texto = ph.label + (ph.totalRounds>1 ? (', volta '+ph.round+' de '+ph.totalRounds) : '');
+      else texto = 'Descansa';
+      if (ph.kind === 'trabalho' && ph.totalRounds>1 && ph.round === ph.totalRounds) texto += '. Última!';
+      falar(texto);
+    }
+  }
+
+  function setPhase(idx){
+    const t = state.timer;
+    t.idx = idx;
+    const ph = t.phases[idx];
+    t.phaseEndsAt = Date.now() + ph.duracao*1000;
+    t.secondsLeft = ph.duracao;
+    onPhaseChange(ph, false);
+  }
+  function finishTimer(){
+    const t = state.timer;
+    t.running = false; t.finished = true; t.secondsLeft = 0;
+    clearInterval(timerEngine.intervalId); timerEngine.intervalId = null;
+    releaseWakeLock();
+    onPhaseChange(null, true);
+    render();
+  }
+  function advancer(){
+    const t = state.timer;
+    if (!t || !t.running) return;
+    if (t.mode === 'stopwatch') { render(); return; }
+    const remaining = Math.ceil((t.phaseEndsAt - Date.now())/1000);
+    if (remaining <= 0) {
+      if (t.idx+1 >= t.phases.length) { finishTimer(); return; }
+      setPhase(t.idx+1);
+      render();
+      return;
+    }
+    t.secondsLeft = remaining;
+    if (state.timerPrefs.contagem3s && remaining <= 3) beep(880,0.1,0.22);
+    render();
+  }
+  function goToNextPhase(){
+    const t = state.timer;
+    if (t.idx+1 >= t.phases.length) { finishTimer(); return; }
+    setPhase(t.idx+1); render();
+  }
+  function goToPrevPhase(){
+    const t = state.timer;
+    setPhase(Math.max(0, t.idx-1)); render();
+  }
+  function startTimer(phases, origem){
+    if (!phases.length) return;
+    requestWakeLock();
+    state.timer = { mode:'phases', phases:phases, idx:0, running:true, origem:origem||'custom' };
+    setPhase(0);
+    clearInterval(timerEngine.intervalId);
+    timerEngine.intervalId = setInterval(advancer, 1000);
+    setState({ screen:'timer' });
+  }
+  function startStopwatch(){
+    requestWakeLock();
+    state.timer = { mode:'stopwatch', running:true, startedAt:Date.now(), elapsedBeforePause:0, origem:'stopwatch' };
+    clearInterval(timerEngine.intervalId);
+    timerEngine.intervalId = setInterval(advancer, 1000);
+    setState({ screen:'timer' });
+  }
+  function destinoAposTimer(origem){ return origem === 'guiado' ? 'workout' : 'timer-setup'; }
+  function captureTimerFormInputs(){
+    const cfg = state.timerCfg;
+    const exTa = document.getElementById('timerExercicios'); if (exTa) cfg.exerciciosTexto = exTa.value;
+    const tI = document.getElementById('timerTrabalho'); if (tI && tI.value!=='') cfg.trabalho = parseInt(tI.value)||cfg.trabalho;
+    const dI = document.getElementById('timerDescanso'); if (dI && dI.value!=='') cfg.descanso = parseInt(dI.value)||cfg.descanso;
+    const sI = document.getElementById('timerSeries'); if (sI && sI.value!=='') cfg.series = parseInt(sI.value)||cfg.series;
+    const pI = document.getElementById('timerPrep'); if (pI && pI.value!=='') cfg.prep = parseInt(pI.value)||cfg.prep;
+  }
+
+  /* ============ RENDER HELPERS ============ */
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  /* backTarget: false/undefined = sem botão voltar; 'ob-back' = passo anterior do questionário;
+     qualquer outro valor = nome do ecrã para onde o botão voltar deve navegar (via a ação 'goto' já existente). */
+  function topbar(title, backTarget){
+    let backBtn = '';
+    if (backTarget === 'ob-back') backBtn = '<button class="backbtn" data-action="ob-back">'+ICON.back+'</button>';
+    else if (backTarget) backBtn = '<button class="backbtn" data-action="goto" data-screen="'+backTarget+'">'+ICON.back+'</button>';
+    return '<div class="topbar">' + backBtn + '<h1 class="title">'+title+'</h1></div>';
+  }
+  function chip(text, accent){ return '<span class="chip'+(accent?' accent':'')+'">'+text+'</span>'; }
+
+  /* ============ SCREENS ============ */
+  function renderLoading(){
+    return '<div style="display:flex;align-items:center;justify-content:center;min-height:80vh;color:var(--textDim)">A preparar o teu treino…</div>';
+  }
+
+  const OB_STEPS = ['objetivo','peso','nivel','dias','tempo','equipamento','limitacoes'];
+
+  function renderOnboarding(){
+    const stepId = OB_STEPS[state.obStep];
+    const r = state.respostas;
+    let body = '';
+
+    if (stepId === 'objetivo') {
+      body += '<p class="label">Qual é o teu objetivo principal?</p>';
+      OBJETIVOS.forEach(o => {
+        body += '<button class="option'+(r.objetivo===o.id?' selected':'')+'" data-action="ob-select" data-field="objetivo" data-value="'+o.id+'">'+
+          '<span class="t">'+o.label+'</span><span class="d">'+o.desc+'</span></button>';
+      });
+    }
+    if (stepId === 'peso') {
+      body += '<p class="label">Qual é o teu peso atual e o peso que queres atingir?</p>';
+      body += '<div class="grid2">' +
+        '<div><label class="minilabel" style="display:block;margin-bottom:6px;">Peso atual (kg)</label>' +
+        '<input id="pesoAtualInput" type="number" inputmode="decimal" min="30" max="300" step="0.1" value="'+(r.pesoAtual!=null?r.pesoAtual:'')+'" placeholder="ex: 78" class="numinput"></div>' +
+        '<div><label class="minilabel" style="display:block;margin-bottom:6px;">Peso-alvo (kg)</label>' +
+        '<input id="pesoAlvoInput" type="number" inputmode="decimal" min="30" max="300" step="0.1" value="'+(r.pesoAlvo!=null?r.pesoAlvo:'')+'" placeholder="ex: 72" class="numinput"></div>' +
+        '</div>';
+      body += '<p style="font-size:12px;color:var(--textFaint);margin-top:14px;">Vamos guardar o teu peso ao longo do tempo para veres a evolução rumo ao alvo. Podes registar um novo peso sempre que quiseres.</p>';
+    }
+    if (stepId === 'nivel') {
+      body += '<p class="label">Qual é o teu nível atual?</p>';
+      NIVEIS.forEach(n => {
+        body += '<button class="option'+(r.nivel===n.id?' selected':'')+'" data-action="ob-select" data-field="nivel" data-value="'+n.id+'">'+
+          '<span class="t">'+n.label+'</span><span class="d">'+n.desc+'</span></button>';
+      });
+    }
+    if (stepId === 'dias') {
+      body += '<p class="label">Quantos dias por semana consegues treinar?</p><div class="grid2">';
+      DIAS_OPCOES.forEach(d => {
+        body += '<button class="bigpick'+(r.dias===d?' selected':'')+'" data-action="ob-select" data-field="dias" data-value="'+d+'" data-num="1">'+d+'<small>dias/semana</small></button>';
+      });
+      body += '</div>';
+    }
+    if (stepId === 'tempo') {
+      body += '<p class="label">Quanto tempo tens por treino?</p><div class="grid2">';
+      TEMPO_OPCOES.forEach(t => {
+        body += '<button class="bigpick'+(r.tempo===t?' selected':'')+'" data-action="ob-select" data-field="tempo" data-value="'+t+'" data-num="1">'+t+' min</button>';
+      });
+      body += '</div>';
+    }
+    if (stepId === 'equipamento') {
+      body += '<p class="label">O que tens disponível em casa? <span class="muted">(escolhe tudo o que se aplica)</span></p><div class="pillwrap">';
+      EQUIPAMENTO_OPCOES.forEach(e => {
+        const sel = r.equipamento.includes(e.id);
+        body += '<button class="pill'+(sel?' selected':'')+'" data-action="equip-toggle" data-id="'+e.id+'">'+(sel?ICON.check:'')+' '+e.label+'</button>';
+      });
+      body += '</div><p style="font-size:12px;color:var(--textFaint);margin-top:14px;">Se não escolheres nada, o plano usa só o peso do corpo.</p>';
+    }
+    if (stepId === 'limitacoes') {
+      body += '<p class="label">Tens alguma lesão ou limitação física a que devamos prestar atenção?</p>';
+      body += '<div style="display:flex;gap:10px;margin-bottom:14px;">' +
+        '<button class="yesno no'+(r.limitacoes===false?' selected':'')+'" data-action="ob-limitacoes" data-value="false">Não</button>' +
+        '<button class="yesno yes'+(r.limitacoes===true?' selected':'')+'" data-action="ob-limitacoes" data-value="true">Sim</button></div>';
+      if (r.limitacoes === true) {
+        body += '<textarea id="limitacoesTexto" placeholder="Descreve brevemente (ex: dor no joelho direito)">'+esc(r.limitacoesTexto)+'</textarea>';
+      }
+      body += '<div class="notice">'+ICON.info+'<p>Isto não substitui uma avaliação profissional. Se tiveres dor persistente, evita o exercício e consulta um médico ou fisioterapeuta.</p></div>';
+    }
+
+    const podeAvancar =
+      (stepId==='objetivo' && r.objetivo) || (stepId==='peso' && r.pesoAtual>0 && r.pesoAlvo>0) || (stepId==='nivel' && r.nivel) || (stepId==='dias' && r.dias) ||
+      (stepId==='tempo' && r.tempo) || (stepId==='equipamento') || (stepId==='limitacoes' && r.limitacoes !== null);
+    const isLast = state.obStep === OB_STEPS.length - 1;
+
+    let dots = '<div class="progress-dots">';
+    OB_STEPS.forEach((s,i) => { dots += '<span class="'+(i<=state.obStep?'on':'')+'"></span>'; });
+    dots += '</div>';
+
+    return topbar('Vamos personalizar', state.obStep>0 ? 'ob-back' : false) + dots + body +
+      '<div style="margin-top:26px;"><button class="btn-primary" id="obNextBtn" '+(podeAvancar?'':'disabled')+'>'+
+      (isLast ? ICON.flame+' Gerar o meu plano' : 'Continuar '+ICON.chevron)+'</button></div>';
+  }
+
+  function pesoCard(){
+    if (state.perfil.pesoAlvo == null) return '';
+    const pesoReg = state.pesoHistorico.length ? state.pesoHistorico[state.pesoHistorico.length-1].peso : state.perfil.pesoAtual;
+    const restante = pesoReg - state.perfil.pesoAlvo;
+    let badge;
+    if (Math.abs(restante) < 0.05) badge = '<span class="chip accent">alvo atingido</span>';
+    else badge = '<span style="font-size:12px;color:var(--textDim);">faltam '+Math.abs(restante).toFixed(1).replace(/\.0$/,'')+' kg</span>';
+    return '<div class="card" data-action="goto" data-screen="peso" style="cursor:pointer;"><div style="display:flex;justify-content:space-between;align-items:center;">' +
+      '<div><p class="minilabel" style="margin-bottom:6px;">Peso</p>' +
+      '<div style="display:flex;align-items:baseline;gap:8px;"><span style="font-family:\'IBM Plex Mono\',monospace;font-size:24px;font-weight:700;">'+pesoReg+'</span>' +
+      '<span style="font-size:12px;color:var(--textFaint);">kg · alvo '+state.perfil.pesoAlvo+' kg</span></div></div>' +
+      '<div style="text-align:right;display:flex;align-items:center;gap:6px;">'+badge+'<span style="color:var(--textFaint);">'+ICON.chevron+'</span></div>' +
+      '</div></div>';
+  }
+  function cronometroCard(){
+    return '<div class="card" data-action="goto" data-screen="timer-setup" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="display:flex;align-items:center;gap:12px;"><span style="color:var(--accent);">'+ICON.clock+'</span>' +
+      '<div><div style="font-size:14.5px;font-weight:700;">Cronómetro</div>' +
+      '<div style="font-size:12px;color:var(--textDim);">Intervalos, Tabata ou livre — com som, voz e vibração</div></div></div>' +
+      '<span style="color:var(--textFaint);">'+ICON.chevron+'</span></div>';
+  }
+  function resetLink(){
+    return '<div style="margin-top:20px;text-align:center;"><button data-action="reset" style="background:none;border:none;color:var(--textFaint);font-size:12px;text-decoration:underline;">Recomeçar (apaga tudo)</button></div>';
+  }
+  function alimentacaoCard(){
+    return '<div class="card" data-action="goto" data-screen="alimentacao" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;">' +
+      '<div style="display:flex;align-items:center;gap:12px;"><span style="color:var(--teal);">'+ICON.leaf+'</span>' +
+      '<div><div style="font-size:14.5px;font-weight:700;">Dicas de alimentação</div>' +
+      '<div style="font-size:12px;color:var(--textDim);">Comer para o teu objetivo, com comida de Angola</div></div></div>' +
+      '<span style="color:var(--textFaint);">'+ICON.chevron+'</span></div>';
+  }
+
+  function renderDashboard(){
+    const total = state.progresso.concluidos.length;
+    const idx = state.progresso.diaIndex;
+
+    if (idx >= 28) {
+      let html = '<div style="margin-bottom:18px;"><p style="color:var(--textDim);font-size:13px;margin:0;">Programa</p>' +
+        '<h1 style="font-size:26px;margin-top:2px;">28 dias concluídos</h1></div>';
+      html += '<div class="card"><p style="font-size:14px;color:var(--textDim);line-height:1.55;margin:0 0 16px;">Terminaste o programa de 28 dias. Vê o teu balanço ou recomeça um novo ciclo.</p>' +
+        '<button class="btn-primary" data-action="goto" data-screen="final">Ver balanço</button></div>';
+      html += pesoCard();
+      html += alimentacaoCard();
+      html += cronometroCard();
+      html += offlineVideosBtn();
+      html += '<button class="btn-ghost" data-action="goto" data-screen="programa">Ver os 28 dias</button>';
+      html += resetLink();
+      return html;
+    }
+
+    const dia = state.programa[idx];
+    const fase = PROGRESSAO_SEMANA[dia.semana].nome;
+    const frac = idx / 28;
+    let html = '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+      '<div><p style="color:var(--textDim);font-size:13px;margin:0;">Semana '+dia.semana+' · '+fase+'</p>' +
+      '<h1 style="font-size:26px;margin-top:2px;">Dia '+dia.numero+' <span style="color:var(--textFaint);font-size:17px;font-weight:500;">de 28</span></h1></div>' +
+      '<div style="text-align:right;"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:22px;font-weight:700;color:var(--accent);">'+total+'</div>' +
+      '<div style="font-size:11px;color:var(--textFaint);">treinos feitos</div></div></div>';
+    html += '<div style="height:8px;border-radius:999px;background:var(--surfaceAlt);overflow:hidden;margin-bottom:20px;"><div style="height:100%;width:'+(frac*100).toFixed(0)+'%;background:var(--accent);"></div></div>';
+
+    if (state.perfil.limitacoes) {
+      html += '<div class="notice">'+ICON.info+'<p>Tens uma limitação registada — evita exercícios que causem dor e ajusta com uma alternativa mais fácil.</p></div>';
+    }
+
+    if (dia.tipo === 'descanso') {
+      html += '<div class="card"><p class="blocktitle" style="color:var(--teal);">Hoje é descanso</p>' +
+        '<p style="font-size:13px;color:var(--textDim);line-height:1.55;margin:0 0 16px;">Descanso ativo: caminha, alonga e bebe água. Emagrecer também acontece na recuperação.</p>' +
+        '<button class="btn-primary" data-action="complete-rest">'+ICON.check+' Marcar descanso e avançar</button></div>';
+    } else {
+      const nEx = dia.principal.length + dia.acessorios.length + dia.finisher.length;
+      html += '<div class="card"><div class="statrow">' +
+        '<div class="statmini">'+ICON.clock+' ~'+state.perfil.tempo+' min</div>' +
+        '<div class="statmini">'+ICON.dumbbell+' '+dia.voltas+' voltas</div>' +
+        '<div class="statmini">'+ICON.flame+' '+dia.trabalho+'s/'+dia.descanso+'s</div></div>' +
+        '<p style="font-size:13px;color:var(--textDim);line-height:1.5;margin:0 0 16px;">Aquecimento · '+nEx+' exercícios em circuito · Core · Alongamento</p>' +
+        '<button class="btn-primary" data-action="goto" data-screen="workout">'+ICON.play+' Começar treino</button></div>';
+    }
+
+    html += pesoCard();
+    html += alimentacaoCard();
+    html += cronometroCard();
+    html += offlineVideosBtn();
+    html += '<button class="btn-ghost" data-action="goto" data-screen="programa">Ver os 28 dias</button>';
+    html += resetLink();
+    html += '<p style="font-size:10.5px;color:var(--textFaint);text-align:center;margin-top:24px;line-height:1.5;">Este protótipo não substitui aconselhamento médico ou de um profissional de exercício.</p>';
+    return html;
+  }
+
+  function renderPrograma(){
+    let html = topbar('Programa · 28 dias', 'dashboard');
+    const idx = state.progresso.diaIndex;
+    for (let s = 1; s <= 4; s++){
+      html += '<p class="minilabel" style="margin:14px 0 8px;">Semana '+s+' · '+PROGRESSAO_SEMANA[s].nome+'</p>' +
+        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;">';
+      for (let p = 0; p < 7; p++){
+        const d = state.programa[(s-1)*7 + p];
+        const done = (d.numero-1) < idx;
+        const hoje = (d.numero-1) === idx;
+        const rest = d.tipo === 'descanso';
+        let bg='var(--surface)', bd='var(--border)', col='var(--text)';
+        if (rest) col = 'var(--textFaint)';
+        if (done){ bg='var(--accentSoft)'; bd='var(--accent)'; col='var(--accent)'; }
+        if (hoje){ bg='var(--accent)'; bd='var(--accent)'; col='#1A1204'; }
+        html += '<div style="text-align:center;padding:9px 0;border-radius:12px;background:'+bg+';border:1.5px solid '+bd+';color:'+col+';">' +
+          '<div style="font-family:\'IBM Plex Mono\',monospace;font-weight:700;font-size:14px;">'+d.numero+'</div>' +
+          '<div style="font-size:9px;margin-top:1px;">'+(rest?'folga':(done?'feito':'treino'))+'</div></div>';
+      }
+      html += '</div>';
+    }
+    return html;
+  }
+
+  function renderWorkout(){
+    const dia = diaAtualObj();
+    if (dia.tipo !== 'treino') return renderDashboard();
+    const blocos = [
+      { titulo:'Aquecimento', tipo:'aquecimento', lista:dia.aquecimento, cor:'var(--teal)' },
+      { titulo:'Parte principal · '+dia.voltas+' voltas', tipo:'principal', lista:dia.principal, cor:'var(--accent)' },
+      { titulo:'Acessórios · '+dia.voltas+' voltas', tipo:'acessorios', lista:dia.acessorios, cor:'var(--accent)' },
+      { titulo:'Finisher cardio · '+dia.voltas+' voltas', tipo:'finisher', lista:dia.finisher, cor:'var(--coral)' },
+      { titulo:'Core', tipo:'core', lista:dia.core, cor:'var(--accent)' },
+      { titulo:'Alongamento', tipo:'alongamento', lista:dia.alongamento, cor:'var(--teal)' },
+    ];
+    let html = topbar('Dia '+dia.numero+' · '+dia.faseNome, 'dashboard');
+    html += '<div style="background:var(--accentSoft);border-radius:14px;padding:12px 14px;margin-bottom:18px;">' +
+      '<p style="font-size:12.5px;color:var(--accent);margin:0;font-weight:600;line-height:1.5;">Circuito: '+dia.trabalho+'s de trabalho / '+dia.descanso+'s de descanso. Faz os exercícios do bloco em sequência e repete o bloco '+dia.voltas+'x.</p></div>';
+    html += '<button class="btn-primary" data-action="start-guided-timer" style="margin-bottom:18px;background:var(--teal);color:#062420;">'+ICON.play+' Iniciar cronómetro guiado deste treino</button>';
+    blocos.forEach(b => {
+      if (!b.lista || !b.lista.length) return;
+      html += '<div style="margin-bottom:18px;"><p class="blocktitle" style="color:'+b.cor+';">'+b.titulo+'</p>';
+      b.lista.forEach(exId => {
+        const ex = EXERCISES[exId];
+        html += '<button class="exrow" data-action="open-exercise" data-id="'+exId+'">' +
+          '<div><div class="n">'+ex.nome+'</div><div class="v">'+volTexto(ex, dia, b.tipo)+'</div></div>' +
+          '<span style="color:var(--textFaint);">'+ICON.chevron+'</span></button>';
+      });
+      html += '</div>';
+    });
+    html += '<div style="background:var(--tealSoft);border-radius:14px;padding:14px;margin-bottom:20px;text-align:center;">' +
+      '<p style="font-size:13px;color:var(--teal);margin:0;font-weight:600;">Relaxamento: 1 minuto de respiração profunda para fechar o treino.</p></div>';
+    html += '<button class="btn-primary" data-action="complete-workout">'+ICON.check+' Concluir treino</button>';
+    return html;
+  }
+
+  function renderTimerSetup(){
+    const cfg = state.timerCfg, prefs = state.timerPrefs;
+    let html = topbar('Cronómetro', 'dashboard');
+    html += '<div class="pillwrap" style="margin-bottom:18px;">';
+    [['personalizado','Personalizado'],['tabata','Tabata clássico'],['stopwatch','Cronómetro livre']].forEach(function(m){
+      html += '<button class="pill'+(cfg.mode===m[0]?' selected':'')+'" data-action="timer-mode" data-value="'+m[0]+'">'+m[1]+'</button>';
+    });
+    html += '</div>';
+
+    if (cfg.mode !== 'stopwatch') {
+      html += '<div class="card"><p class="minilabel" style="margin-bottom:10px;">Exercícios (opcional, um por linha)</p>' +
+        '<textarea id="timerExercicios" placeholder="ex:\nFlexões\nAgachamentos\nPrancha">'+esc(cfg.exerciciosTexto)+'</textarea>' +
+        '<p style="font-size:11.5px;color:var(--textFaint);margin-top:8px;">Se deixares em branco, aparece "Série 1", "Série 2"... Se puseres menos exercícios do que séries, a lista repete em ciclo.</p></div>';
+
+      if (cfg.mode === 'personalizado') {
+        html += '<div class="card"><div class="grid2" style="margin-bottom:12px;">' +
+          '<div><label class="minilabel" style="display:block;margin-bottom:6px;">Trabalho (s)</label><input id="timerTrabalho" type="number" inputmode="numeric" min="5" step="5" value="'+cfg.trabalho+'" class="numinput"></div>' +
+          '<div><label class="minilabel" style="display:block;margin-bottom:6px;">Descanso (s)</label><input id="timerDescanso" type="number" inputmode="numeric" min="0" step="5" value="'+cfg.descanso+'" class="numinput"></div>' +
+          '</div><div class="grid2">' +
+          '<div><label class="minilabel" style="display:block;margin-bottom:6px;">Séries</label><input id="timerSeries" type="number" inputmode="numeric" min="1" step="1" value="'+cfg.series+'" class="numinput"></div>' +
+          '<div><label class="minilabel" style="display:block;margin-bottom:6px;">Preparação (s)</label><input id="timerPrep" type="number" inputmode="numeric" min="0" step="5" value="'+cfg.prep+'" class="numinput"></div>' +
+          '</div></div>';
+      } else {
+        html += '<div class="notice" style="background:var(--tealSoft);"><span style="color:var(--teal);">'+ICON.info+'</span><p>Tabata clássico: 20s trabalho / 10s descanso × 8 séries. Falta só a preparação inicial.</p></div>' +
+          '<div class="card"><label class="minilabel" style="display:block;margin-bottom:6px;">Preparação (s)</label><input id="timerPrep" type="number" inputmode="numeric" min="0" step="5" value="'+cfg.prep+'" class="numinput"></div>';
+      }
+    } else {
+      html += '<div class="notice"><span style="color:var(--teal);">'+ICON.info+'</span><p>Conta o tempo a subir, sem estrutura de séries — útil para pranchas, isometrias ou qualquer coisa que precises de cronometrar livremente.</p></div>';
+    }
+
+    html += '<p class="minilabel" style="margin:18px 0 8px;">Sinais durante o cronómetro</p><div class="pillwrap" style="margin-bottom:8px;">';
+    html += '<button class="pill'+(prefs.somFase?' selected':'')+'" data-action="timer-pref-toggle" data-key="somFase">'+(prefs.somFase?ICON.check:'')+' Beep de fase</button>';
+    html += '<button class="pill'+(prefs.contagem3s?' selected':'')+'" data-action="timer-pref-toggle" data-key="contagem3s">'+(prefs.contagem3s?ICON.check:'')+' Contagem 3s</button>';
+    html += '<button class="pill'+(prefs.voz?' selected':'')+'" data-action="timer-pref-toggle" data-key="voz">'+(prefs.voz?ICON.check:'')+' Voz</button>';
+    html += '<button class="pill'+(prefs.vibracao?' selected':'')+'" data-action="timer-pref-toggle" data-key="vibracao">'+(prefs.vibracao?ICON.check:'')+' Vibração</button>';
+    html += '</div><p style="font-size:11px;color:var(--textFaint);margin-bottom:20px;">Estas preferências aplicam-se também ao cronómetro guiado do treino do dia.</p>';
+
+    html += '<button class="btn-primary" data-action="start-custom-timer">'+ICON.play+' '+(cfg.mode==='stopwatch'?'Iniciar cronómetro':'Começar')+'</button>';
+    return html;
+  }
+
+  function renderTimer(){
+    const t = state.timer;
+    if (!t) return renderTimerSetup();
+
+    if (t.mode === 'stopwatch') {
+      const elapsed = t.elapsedBeforePause + (t.running ? (Date.now()-t.startedAt)/1000 : 0);
+      let html = topbar('Cronómetro livre', false);
+      html += '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:52vh;">' +
+        '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:64px;font-weight:700;letter-spacing:1px;">'+fmtTime(elapsed)+'</div>' +
+        '<p style="color:var(--textDim);margin-top:8px;">'+(t.running?'A contar…':'Em pausa')+'</p></div>';
+      html += t.running
+        ? '<button class="btn-primary" data-action="timer-pause">'+ICON.pause+' Pausar</button>'
+        : '<button class="btn-primary" data-action="timer-resume">'+ICON.play+' Retomar</button>';
+      html += '<div style="height:10px;"></div><button class="btn-ghost" data-action="timer-stop">Terminar</button>';
+      return html;
+    }
+
+    if (t.finished) {
+      const destino = destinoAposTimer(t.origem);
+      return '<div style="display:flex;flex-direction:column;justify-content:center;min-height:80vh;text-align:center;">' +
+        '<div style="width:76px;height:76px;border-radius:50%;background:var(--accentSoft);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--accent);">'+ICON.check+'</div>' +
+        '<h1 style="font-size:24px;margin-bottom:8px;">Cronómetro terminado</h1>' +
+        '<p style="color:var(--textDim);margin-bottom:28px;">Bom trabalho!</p>' +
+        '<button class="btn-primary" data-action="goto" data-screen="'+destino+'">'+(destino==='workout'?'Voltar ao treino':'Voltar')+'</button></div>';
+    }
+
+    const ph = t.phases[t.idx];
+    const total = t.phases.length;
+    const cor = ph.kind === 'trabalho' ? 'var(--accent)' : (ph.kind === 'descanso' ? 'var(--teal)' : 'var(--coral)');
+    const fundo = ph.kind === 'trabalho' ? 'var(--accentSoft)' : (ph.kind === 'descanso' ? 'var(--tealSoft)' : 'var(--coralSoft)');
+    const rotulo = ph.kind === 'trabalho' ? 'TRABALHO' : (ph.kind === 'descanso' ? 'DESCANSO' : 'PREPARA-TE');
+    const next = t.phases[t.idx+1];
+
+    let html = topbar(ph.bloco || 'Cronómetro', false);
+    html += '<div style="height:6px;border-radius:999px;background:var(--surfaceAlt);overflow:hidden;margin-bottom:22px;"><div style="height:100%;width:'+((t.idx/total)*100).toFixed(0)+'%;background:var(--accent);"></div></div>';
+    html += '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:'+fundo+';border-radius:24px;padding:32px 20px;min-height:50vh;text-align:center;">' +
+      '<p style="font-size:12px;font-weight:700;letter-spacing:1.5px;color:'+cor+';margin:0 0 10px;">'+rotulo+(ph.totalRounds>1?(' · VOLTA '+ph.round+'/'+ph.totalRounds):'')+'</p>' +
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:72px;font-weight:700;color:'+cor+';line-height:1;">'+fmtTime(t.secondsLeft)+'</div>' +
+      '<h2 style="margin-top:16px;font-size:22px;">'+esc(ph.label)+'</h2>';
+    if (next) html += '<p style="margin-top:14px;font-size:13px;color:'+cor+';opacity:0.85;">A seguir: '+esc(next.label)+'</p>';
+    html += '</div>';
+
+    html += '<div style="display:flex;gap:10px;margin-top:18px;">' +
+      '<button class="btn-ghost" data-action="timer-skip-back" style="flex:1;">Anterior</button>' +
+      (t.running
+        ? '<button class="btn-primary" data-action="timer-pause" style="flex:1;">'+ICON.pause+' Pausar</button>'
+        : '<button class="btn-primary" data-action="timer-resume" style="flex:1;">'+ICON.play+' Retomar</button>') +
+      '<button class="btn-ghost" data-action="timer-skip" style="flex:1;">Seguinte</button></div>' +
+      '<div style="height:10px;"></div><button class="btn-ghost" data-action="timer-stop">Parar cronómetro</button>';
+    return html;
+  }
+
+  function renderResumo(){
+    const total = state.progresso.concluidos.length;
+    const idx = state.progresso.diaIndex;
+    let proximo = '';
+    if (idx < 28) {
+      const d = state.programa[idx];
+      proximo = d.tipo === 'descanso' ? 'Amanhã é descanso — recuperar também faz emagrecer.' : ('Próximo: Dia '+d.numero+' de 28.');
+    }
+    return '<div style="display:flex;flex-direction:column;justify-content:center;min-height:80vh;text-align:center;">' +
+      '<div style="width:76px;height:76px;border-radius:50%;background:var(--accentSoft);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--accent);">'+ICON.check+'</div>' +
+      '<h1 style="font-size:24px;margin-bottom:8px;">Treino concluído</h1>' +
+      '<p style="color:var(--textDim);margin-bottom:6px;">Já são '+total+' treinos feitos. '+proximo+'</p>' +
+      '<p style="color:var(--textFaint);font-size:12px;margin-bottom:28px;">Regista o teu peso ~1x por semana para veres a evolução.</p>' +
+      '<button class="btn-primary" data-action="goto" data-screen="dashboard">Voltar ao início</button></div>';
+  }
+
+  function renderFinal(){
+    const total = state.progresso.concluidos.length;
+    const inicial = state.perfil.pesoAtual;
+    const alvo = state.perfil.pesoAlvo;
+    const atual = state.pesoHistorico.length ? state.pesoHistorico[state.pesoHistorico.length-1].peso : inicial;
+    const dif = inicial - atual;
+    let html = topbar('Balanço · 28 dias', 'dashboard');
+    html += '<div class="card" style="text-align:center;"><div style="width:64px;height:64px;border-radius:50%;background:var(--accentSoft);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:var(--accent);">'+ICON.flame+'</div>' +
+      '<h2 style="font-size:20px;margin-bottom:6px;">Programa concluído!</h2>' +
+      '<p style="font-size:13px;color:var(--textDim);margin:0;">Completaste '+total+' treinos em 28 dias.</p></div>';
+    if (alvo != null) {
+      html += '<div class="card"><div class="statgrid">' +
+        '<div><div class="num">'+inicial+'</div><div class="lb">peso inicial</div></div>' +
+        '<div><div class="num" style="color:var(--accent);">'+atual+'</div><div class="lb">peso atual</div></div>' +
+        '<div><div class="num">'+alvo+'</div><div class="lb">alvo</div></div></div>' +
+        '<p style="font-size:13px;color:var(--textDim);margin:12px 0 0;text-align:center;line-height:1.5;">' +
+        (dif > 0.05 ? ('Perdeste '+dif.toFixed(1).replace(/\.0$/,'')+' kg neste ciclo.') :
+         (dif < -0.05 ? ('Ganhaste '+Math.abs(dif).toFixed(1).replace(/\.0$/,'')+' kg — revê a alimentação e a intensidade.') :
+         'Peso mantido. A composição corporal pode ter melhorado mesmo sem mexer na balança.')) +
+        '</p></div>';
+    }
+    html += '<button class="btn-primary" data-action="reset">Recomeçar novo ciclo de 28 dias</button>' +
+      '<div style="height:10px;"></div>' +
+      '<button class="btn-ghost" data-action="goto" data-screen="peso">Ver evolução do peso</button>';
+    return html;
+  }
+
+  function renderAlimentacao(){
+    const obj = (state.perfil && state.perfil.objetivo) || 'perderGordura';
+    const info = NUTRI[obj] || NUTRI.perderGordura;
+    let html = topbar('Alimentação', 'dashboard');
+    html += '<div class="card"><h3 style="font-size:17px;margin-bottom:6px;">'+info.titulo+'</h3>' +
+      '<p style="font-size:13px;color:var(--textDim);line-height:1.55;margin:0;">'+info.intro+'</p></div>';
+
+    html += '<p class="minilabel" style="margin:4px 0 8px;">Princípios</p>';
+    html += '<div class="card" style="padding:16px;"><ul style="margin:0;padding-left:18px;color:var(--textDim);font-size:13px;line-height:1.7;">' +
+      info.regras.map(r=>'<li>'+r+'</li>').join('') + '</ul></div>';
+
+    html += '<div class="card" style="background:var(--accentSoft);border-color:transparent;"><p class="minilabel" style="color:var(--accent);margin-bottom:6px;">O prato-tipo</p>' +
+      '<p style="font-size:13px;color:var(--text);line-height:1.55;margin:0;">'+info.prato+'</p></div>';
+
+    html += '<p class="minilabel" style="margin:4px 0 8px;">Trocas inteligentes</p><div class="card" style="padding:8px 16px;">';
+    info.trocas.forEach((t,i)=>{
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:10px 0;'+(i<info.trocas.length-1?'border-bottom:1px solid var(--border);':'')+'">' +
+        '<span style="flex:1;font-size:12.5px;color:var(--textFaint);text-decoration:line-through;">'+t[0]+'</span>' +
+        '<span style="color:var(--teal);">'+ICON.chevron+'</span>' +
+        '<span style="flex:1;font-size:12.5px;color:var(--text);font-weight:600;">'+t[1]+'</span></div>';
+    });
+    html += '</div>';
+
+    html += '<p class="minilabel" style="margin:14px 0 8px;">O que comer (comum em Angola)</p>';
+    Object.keys(ALIMENTOS).forEach(k=>{
+      const g = ALIMENTOS[k];
+      html += '<div class="card" style="padding:16px;"><p class="blocktitle" style="color:'+g.cor+';margin-bottom:2px;">'+g.titulo+'</p>' +
+        '<p style="font-size:11px;color:var(--textFaint);margin:0 0 10px;">'+g.sub+'</p>';
+      g.itens.forEach(it=>{
+        html += '<div style="margin-bottom:8px;"><div style="font-size:13.5px;font-weight:600;">'+it.n+'</div>' +
+          '<div style="font-size:12px;color:var(--textDim);">'+it.t+'</div></div>';
+      });
+      html += '</div>';
+    });
+
+    html += '<div class="notice">'+ICON.info+'<p>São dicas gerais de alimentação saudável, não um plano clínico. Se tiveres diabetes, hipertensão, gravidez ou outra condição de saúde, fala com um médico ou nutricionista antes de mudar a alimentação.</p></div>';
+    return html;
+  }
+
+  function formatData(iso){ const d = new Date(iso); return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
+
+  function renderPeso(){
+    const hist = state.pesoHistorico;
+    const inicial = state.perfil.pesoAtual;
+    const alvo = state.perfil.pesoAlvo;
+    const atual = hist.length ? hist[hist.length-1].peso : inicial;
+    const difAlvo = atual - alvo;
+    let html = topbar('O teu peso', 'dashboard');
+
+    // resumo + barra de progresso rumo ao alvo
+    let frac = 0;
+    if (inicial !== alvo) frac = (inicial - atual) / (inicial - alvo);
+    frac = Math.max(0, Math.min(1, frac));
+    html += '<div class="card"><div class="statgrid">' +
+      '<div><div class="num">'+inicial+'</div><div class="lb">inicial</div></div>' +
+      '<div><div class="num" style="color:var(--accent);">'+atual+'</div><div class="lb">atual</div></div>' +
+      '<div><div class="num">'+alvo+'</div><div class="lb">alvo</div></div></div>' +
+      '<div style="height:8px;border-radius:999px;background:var(--surfaceAlt);overflow:hidden;"><div style="height:100%;width:'+(frac*100).toFixed(0)+'%;background:var(--accent);"></div></div>' +
+      '<p style="font-size:12px;color:var(--textDim);margin:10px 0 0;">'+
+      (Math.abs(difAlvo)<0.05 ? 'Atingiste o teu alvo — parabéns!' : ('Faltam '+Math.abs(difAlvo).toFixed(1).replace(/\.0$/,'')+' kg para o alvo')) +
+      '</p></div>';
+
+    // registar novo peso
+    html += '<div class="card"><p class="minilabel" style="margin-bottom:10px;">Registar peso de hoje</p>' +
+      '<div style="display:flex;gap:10px;">' +
+      '<input id="novoPesoInput" type="number" inputmode="decimal" min="30" max="300" step="0.1" placeholder="'+atual+'" class="numinput" style="flex:1;">' +
+      '<button class="btn-primary" data-action="save-peso" style="width:auto;padding-left:22px;padding-right:22px;">Guardar</button></div></div>';
+
+    // gráfico de evolução (barras SVG)
+    if (hist.length) {
+      const vals = hist.map(h=>h.peso).concat([alvo]);
+      const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+      const range = (max - min) || 1;
+      const W = 300, H = 150, pad = 10;
+      const n = hist.length;
+      const barW = Math.max(8, Math.min(38, (W - pad*2) / n - 6));
+      const gap = ((W - pad*2) - barW*n) / (n + 1);
+      const yFor = (v) => H - 22 - (((v - min) / range) * (H - 42) + 6);
+      let bars = '';
+      hist.forEach((h,i) => {
+        const x = pad + gap*(i+1) + barW*i;
+        const y = yFor(h.peso);
+        const barH = (H - 22) - y;
+        bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+barH.toFixed(1)+'" rx="4" fill="var(--accent)"/>';
+        bars += '<text x="'+(x+barW/2).toFixed(1)+'" y="'+(y-4).toFixed(1)+'" text-anchor="middle" font-size="8" fill="var(--textDim)">'+h.peso+'</text>';
+        bars += '<text x="'+(x+barW/2).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" font-size="8" fill="var(--textFaint)">'+formatData(h.data)+'</text>';
+      });
+      const yAlvo = yFor(alvo);
+      const alvoLine = '<line x1="'+pad+'" y1="'+yAlvo.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+yAlvo.toFixed(1)+'" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="4 4"/>' +
+        '<text x="'+(W-pad)+'" y="'+(yAlvo-4).toFixed(1)+'" text-anchor="end" font-size="8" fill="var(--teal)">alvo '+alvo+'</text>';
+      html += '<div class="card"><p class="minilabel" style="margin-bottom:10px;">Evolução</p>' +
+        '<svg viewBox="0 0 '+W+' '+H+'" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Gráfico da evolução do peso">'+alvoLine+bars+'</svg></div>';
+    }
+
+    return html;
+  }
+
+  /* Vídeos do YouTube: cada exercício mostra o seu youtubeId embutido no modal (ver renderExerciseModal). */
+
+  /* ============ VÍDEOS OFFLINE (IndexedDB — fiável no iPhone) ============ */
+  const VDB = {
+    db: null,
+    open(){
+      return new Promise((resolve) => {
+        if (this.db) return resolve(this.db);
+        if (!('indexedDB' in window)) return resolve(null);
+        let rq;
+        try { rq = indexedDB.open('treino-videos', 1); } catch(e){ return resolve(null); }
+        rq.onupgradeneeded = () => { try { rq.result.createObjectStore('videos'); } catch(e){} };
+        rq.onsuccess = () => { this.db = rq.result; resolve(this.db); };
+        rq.onerror = () => resolve(null);
+      });
+    },
+    get(id){
+      return this.open().then(db => db ? new Promise(res => {
+        try { const r = db.transaction('videos','readonly').objectStore('videos').get(id);
+          r.onsuccess = () => res(r.result || null); r.onerror = () => res(null);
+        } catch(e){ res(null); }
+      }) : null);
+    },
+    put(id, blob){
+      return this.open().then(db => db ? new Promise(res => {
+        try { const r = db.transaction('videos','readwrite').objectStore('videos').put(blob, id);
+          r.onsuccess = () => res(true); r.onerror = () => res(false);
+        } catch(e){ res(false); }
+      }) : false);
+    },
+    has(id){ return this.get(id).then(b => !!b); },
+  };
+
+  function mostrarYouTube(wrap, ex){
+    if (!wrap) return;
+    wrap.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+ex.youtubeId+'?rel=0&modestbranding=1" title="'+esc(ex.nome)+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+  }
+  function carregarVideo(wrap, ex){
+    if (!wrap) return;
+    const path = 'videos/' + encodeURIComponent(VIDEO_MAP[ex.id] || (ex.id + '.mp4'));
+    function usarSrc(src){
+      wrap.innerHTML = '<video src="'+src+'" controls playsinline loop preload="metadata"></video>';
+      const v = wrap.querySelector('video');
+      if (v) v.addEventListener('error', function(){ mostrarYouTube(wrap, ex); }, { once:true });
+    }
+    VDB.get(ex.id).then(blob => {
+      if (blob) { usarSrc(URL.createObjectURL(blob)); return; }
+      usarSrc(path); // rede (online) ou ficheiro local no computador
+      // em segundo plano, guarda para offline (funciona quando servido por http/https)
+      fetch(path).then(r => r.ok ? r.blob() : null).then(b => { if (b) VDB.put(ex.id, b); }).catch(()=>{});
+    });
+  }
+  function contarVideos(){
+    const ids = Object.keys(VIDEO_MAP);
+    return Promise.all(ids.map(id => VDB.has(id))).then(arr => arr.filter(Boolean).length);
+  }
+  function atualizarContagemVideos(){
+    const btn = document.getElementById('dlVideosBtn');
+    if (!btn) return;
+    const total = Object.keys(VIDEO_MAP).length;
+    contarVideos().then(n => {
+      if (n >= total) btn.innerHTML = ICON.check + ' Vídeos guardados para offline ('+n+'/'+total+')';
+      else btn.innerHTML = ICON.play + ' Guardar vídeos para offline ('+n+'/'+total+')';
+    });
+  }
+  function offlineVideosBtn(){
+    const total = Object.keys(VIDEO_MAP).length;
+    return '<button id="dlVideosBtn" class="btn-ghost" data-action="baixar-videos" style="margin-bottom:10px;">'+ICON.play+' Guardar vídeos para offline ('+total+' clips)</button>';
+  }
+
+  function renderExerciseModal(){
+    const ex = EXERCISES[state.exercicioAberto];
+    const dia = diaAtualObj();
+    const circuito = (dia && dia.tipo === 'treino') ? dia : null;
+    let statgrid = '';
+    if (ex.tipoVolume === 'mobilidade') {
+      statgrid = '<div class="statgrid"><div style="flex:2;"><div class="num" style="font-size:14px;">'+ex.volumeTexto+'</div><div class="lb">duração sugerida</div></div></div>';
+    } else if (circuito) {
+      statgrid = '<div class="statgrid"><div><div class="num">'+circuito.trabalho+'s</div><div class="lb">trabalho</div></div>' +
+        '<div><div class="num">'+circuito.descanso+'s</div><div class="lb">descanso</div></div>' +
+        '<div><div class="num">'+circuito.voltas+'</div><div class="lb">voltas</div></div></div>';
+    }
+    const ytSearch = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ex.nome + ' exercício técnica');
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    backdrop.setAttribute('data-action-backdrop','close-exercise');
+    backdrop.innerHTML = '<div class="modal" data-stop="1">' +
+      '<div class="modal-head"><h2 style="font-size:19px;">'+ex.nome+'</h2><button class="close-x" data-action="close-exercise">'+ICON.x+'</button></div>' +
+      '<div class="modal-video"></div>' +
+      '<a class="yt-link" href="'+ytSearch+'" target="_blank" rel="noopener">'+ICON.play+' Abrir no YouTube (ecrã maior)</a>' +
+      statgrid +
+      '<div class="infoblock"><p class="minilabel">Músculos trabalhados</p><div>' +
+      ex.musculosPrimarios.map(m=>chip(m,true)).join('') + ex.musculosSecundarios.map(m=>chip(m,false)).join('') + '</div></div>' +
+      '<div class="infoblock"><p class="minilabel" style="color:var(--teal);">Execução correta</p><p class="body">'+ex.execucaoCorreta+'</p></div>' +
+      '<div class="infoblock"><p class="minilabel" style="color:var(--coral);">Execução incorreta</p><p class="body">'+ex.execucaoIncorreta+'</p></div>' +
+      '<div class="infoblock"><p class="minilabel">Erros mais comuns</p><ul style="margin:0;padding-left:18px;color:var(--textDim);font-size:13px;line-height:1.6;">' +
+      ex.errosComuns.map(e=>'<li>'+e+'</li>').join('') + '</ul></div>' +
+      '<div class="infoblock"><p class="minilabel">Respiração</p><p class="body">'+ex.respiracao+'</p></div>' +
+      '<div style="display:flex;gap:10px;"><div style="flex:1;"><p class="minilabel">Mais fácil</p><p class="body">'+ex.alternativaFacil+'</p></div>' +
+      '<div style="flex:1;"><p class="minilabel">Mais difícil</p><p class="body">'+ex.alternativaDificil+'</p></div></div>' +
+      '</div>';
+    document.body.appendChild(backdrop);
+    carregarVideo(backdrop.querySelector('.modal-video'), ex);
+  }
+
+  /* ============ MAIN RENDER ============ */
+  function render(){
+    const root = document.getElementById('root');
+    const existingModal = document.querySelector('.modal-backdrop');
+    if (existingModal) existingModal.remove();
+
+    switch(state.screen){
+      case 'loading': root.innerHTML = renderLoading(); break;
+      case 'onboarding': root.innerHTML = renderOnboarding(); break;
+      case 'dashboard': root.innerHTML = renderDashboard(); break;
+      case 'programa': root.innerHTML = renderPrograma(); break;
+      case 'workout': root.innerHTML = renderWorkout(); break;
+      case 'timer-setup': root.innerHTML = renderTimerSetup(); break;
+      case 'timer': root.innerHTML = renderTimer(); break;
+      case 'peso': root.innerHTML = renderPeso(); break;
+      case 'alimentacao': root.innerHTML = renderAlimentacao(); break;
+      case 'resumo': root.innerHTML = renderResumo(); break;
+      case 'final': root.innerHTML = renderFinal(); break;
+    }
+    if (state.screen === 'onboarding') {
+      const btn = document.getElementById('obNextBtn');
+      if (btn) btn.addEventListener('click', onObNext);
+      const ta = document.getElementById('limitacoesTexto');
+      if (ta) ta.addEventListener('input', (e) => { state.respostas.limitacoesTexto = e.target.value; });
+      const pa = document.getElementById('pesoAtualInput');
+      const pv = document.getElementById('pesoAlvoInput');
+      function updatePesoBtn(){
+        const b = document.getElementById('obNextBtn');
+        if (b) b.disabled = !(state.respostas.pesoAtual>0 && state.respostas.pesoAlvo>0);
+      }
+      if (pa) pa.addEventListener('input', (e) => { state.respostas.pesoAtual = parseFloat(e.target.value) || null; updatePesoBtn(); });
+      if (pv) pv.addEventListener('input', (e) => { state.respostas.pesoAlvo = parseFloat(e.target.value) || null; updatePesoBtn(); });
+    }
+    if (state.screen === 'dashboard') atualizarContagemVideos();
+    if (state.exercicioAberto) renderExerciseModal();
+  }
+
+  function onObNext(){
+    const isLast = state.obStep === OB_STEPS.length - 1;
+    if (isLast) {
+      state.perfil = state.respostas;
+      state.programa = gerarPlano(state.respostas);
+      state.progresso = { diaIndex:0, concluidos: [], dataInicio: new Date().toISOString() };
+      state.pesoHistorico = [{ data: new Date().toISOString(), peso: state.respostas.pesoAtual }];
+      salvarTudo();
+      setState({ screen: 'dashboard' });
+    } else {
+      setState({ obStep: state.obStep + 1 });
+    }
+  }
+
+  /* ============ EVENT DELEGATION ============ */
+  document.addEventListener('click', function(e){
+    const backdrop = e.target.closest('.modal-backdrop');
+    if (backdrop && !e.target.closest('[data-stop]')) { setState({ exercicioAberto: null }); return; }
+
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.getAttribute('data-action');
+
+    if (action === 'ob-select') {
+      const field = el.getAttribute('data-field');
+      const raw = el.getAttribute('data-value');
+      const value = el.getAttribute('data-num') ? Number(raw) : raw;
+      state.respostas[field] = value;
+      render();
+    } else if (action === 'ob-limitacoes') {
+      state.respostas.limitacoes = el.getAttribute('data-value') === 'true';
+      render();
+    } else if (action === 'equip-toggle') {
+      const id = el.getAttribute('data-id');
+      const eq = state.respostas.equipamento;
+      state.respostas.equipamento = eq.includes(id) ? eq.filter(x=>x!==id) : [...eq, id];
+      render();
+    } else if (action === 'ob-back') {
+      setState({ obStep: Math.max(0, state.obStep - 1) });
+    } else if (action === 'goto') {
+      setState({ screen: el.getAttribute('data-screen') });
+    } else if (action === 'open-exercise') {
+      setState({ exercicioAberto: el.getAttribute('data-id') });
+    } else if (action === 'close-exercise') {
+      setState({ exercicioAberto: null });
+    } else if (action === 'complete-workout') {
+      const dia = diaAtualObj();
+      state.progresso.concluidos.push({ dia: dia.numero, data: new Date().toISOString() });
+      state.progresso.diaIndex = Math.min(28, state.progresso.diaIndex + 1);
+      salvarTudo();
+      setState({ screen: state.progresso.diaIndex >= 28 ? 'final' : 'resumo' });
+    } else if (action === 'complete-rest') {
+      state.progresso.diaIndex = Math.min(28, state.progresso.diaIndex + 1);
+      salvarTudo();
+      setState({ screen: state.progresso.diaIndex >= 28 ? 'final' : 'dashboard' });
+    } else if (action === 'baixar-videos') {
+      const btn = document.getElementById('dlVideosBtn');
+      const ids = Object.keys(VIDEO_MAP);
+      const total = ids.length;
+      (async () => {
+        if (btn) btn.disabled = true;
+        let done = 0;
+        for (let i = 0; i < ids.length; i++){
+          const id = ids[i];
+          if (await VDB.has(id)) { done++; continue; }
+          if (btn) btn.innerHTML = 'A guardar vídeos… ('+done+'/'+total+')';
+          try {
+            const r = await fetch('videos/' + encodeURIComponent(VIDEO_MAP[id]));
+            if (r.ok) { const b = await r.blob(); await VDB.put(id, b); done++; }
+          } catch(err){}
+        }
+        if (btn) btn.disabled = false;
+        atualizarContagemVideos();
+      })();
+    } else if (action === 'start-guided-timer') {
+      const dia = diaAtualObj();
+      startTimer(buildGuidedPhases(dia), 'guiado');
+    } else if (action === 'timer-mode') {
+      captureTimerFormInputs();
+      state.timerCfg.mode = el.getAttribute('data-value');
+      render();
+    } else if (action === 'timer-pref-toggle') {
+      captureTimerFormInputs();
+      const key = el.getAttribute('data-key');
+      state.timerPrefs[key] = !state.timerPrefs[key];
+      storage.set('timerPrefs', JSON.stringify(state.timerPrefs));
+      render();
+    } else if (action === 'start-custom-timer') {
+      captureTimerFormInputs();
+      storage.set('timerCfg', JSON.stringify(state.timerCfg));
+      if (state.timerCfg.mode === 'stopwatch') startStopwatch();
+      else startTimer(buildCustomPhases(state.timerCfg), 'custom');
+    } else if (action === 'timer-pause') {
+      const t = state.timer; if (!t) return;
+      if (t.mode === 'stopwatch') { t.elapsedBeforePause += (Date.now()-t.startedAt)/1000; }
+      else { t.pausedRemainingMs = t.phaseEndsAt - Date.now(); t.secondsLeft = Math.max(0, Math.ceil(t.pausedRemainingMs/1000)); }
+      t.running = false;
+      clearInterval(timerEngine.intervalId); timerEngine.intervalId = null;
+      releaseWakeLock();
+      render();
+    } else if (action === 'timer-resume') {
+      const t = state.timer; if (!t) return;
+      if (t.mode === 'stopwatch') t.startedAt = Date.now();
+      else t.phaseEndsAt = Date.now() + (t.pausedRemainingMs||0);
+      t.running = true;
+      requestWakeLock();
+      timerEngine.intervalId = setInterval(advancer, 1000);
+      render();
+    } else if (action === 'timer-skip') {
+      if (state.timer && state.timer.phases) goToNextPhase();
+    } else if (action === 'timer-skip-back') {
+      if (state.timer && state.timer.phases) goToPrevPhase();
+    } else if (action === 'timer-stop') {
+      clearInterval(timerEngine.intervalId); timerEngine.intervalId = null;
+      releaseWakeLock();
+      try { speechSynthesis.cancel(); } catch(e){}
+      const origem = state.timer && state.timer.origem;
+      state.timer = null;
+      setState({ screen: destinoAposTimer(origem) });
+    } else if (action === 'save-peso') {
+      const input = document.getElementById('novoPesoInput');
+      const v = parseFloat(input && input.value);
+      if (v > 0) {
+        state.pesoHistorico.push({ data: new Date().toISOString(), peso: v });
+        salvarTudo();
+        setState({ screen: 'peso' });
+      }
+    } else if (action === 'reset') {
+      (async () => {
+        await storage.remove('perfil'); await storage.remove('programa'); await storage.remove('plano'); await storage.remove('progresso'); await storage.remove('pesoHistorico');
+        state = { screen:'onboarding', perfil:null, programa:null, progresso:{diaIndex:0,concluidos:[],dataInicio:null}, pesoHistorico:[], obStep:0,
+          respostas:{objetivo:null,nivel:null,dias:null,tempo:null,equipamento:[],limitacoes:null,limitacoesTexto:'',pesoAtual:null,pesoAlvo:null}, exercicioAberto:null };
+        render();
+      })();
+    }
+  });
+
+  init();
+})();
+</script>
+<script>
+  /* Regista o service worker (necessário para instalar como app e funcionar offline) */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
+</script>
+</body>
+</html>
