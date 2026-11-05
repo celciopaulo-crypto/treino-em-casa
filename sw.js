@@ -1,45 +1,6 @@
-/* Service Worker — Treino em Casa (PWA)
-   Guarda a app e os vídeos em cache para funcionarem offline depois da 1ª abertura. */
-const CACHE = 'treino-em-casa-v1';
-const SHELL = ['treino-em-casa.html', 'manifest.json', 'icon.svg'];
-
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then((c) => c.addAll(SHELL))
-      .catch(() => {})            // se algum ficheiro do shell falhar, não bloqueia
-      .then(() => self.skipWaiting())
-  );
-});
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((ks) => Promise.all(ks.map((k) => (k === CACHE ? null : caches.delete(k)))))
-      .then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (e) => {
-  const req = e.request;
-  if (req.method !== 'GET') return;
-  const url = new URL(req.url);
-  if (url.origin !== location.origin) return; // deixa YouTube e outros à rede normal
-  if (url.pathname.indexOf('/videos/') !== -1) return; // vídeos: geridos offline via IndexedDB (fiável no iPhone)
-
-  // Usa o caminho como chave: ignora o cabeçalho Range dos vídeos e evita respostas 206 na cache.
-  e.respondWith((async () => {
-    const cache = await caches.open(CACHE);
-    const cached = await cache.match(url.pathname);
-    if (cached) return cached;
-    try {
-      const res = await fetch(url.pathname, { cache: 'no-store' });
-      if (res && res.status === 200) cache.put(url.pathname, res.clone());
-      return res;
-    } catch (err) {
-      const fallback = await cache.match(url.pathname);
-      if (fallback) return fallback;
-      throw err;
-    }
-  })());
-});
+const CACHE='gz-v9',SHELL=['index.html','app.css','app.js','manifest.json','treinos.js','nutricao.js','ia.js','lembretes.js','extra.js','mais.js','fonts/sora-latin-700-normal.woff2','fonts/inter-latin-400-normal.woff2','fonts/inter-latin-600-normal.woff2','logo.png','icon-180.png','icon-192.png','icon-512.png'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
+// Rede primeiro (apanha sempre a versão nova); cache quando offline.
+self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET'||(new URL(r.url).origin!==location.origin&&!/fonts\.(googleapis|gstatic)\.com/.test(r.url)))return;
+e.respondWith(fetch(r).then(res=>{if(res.ok||res.type==='opaque'){const cp=res.clone();caches.open(CACHE).then(c=>c.put(r,cp))}return res}).catch(()=>caches.match(r,{ignoreSearch:true}).then(m=>m||caches.match('index.html'))))});
