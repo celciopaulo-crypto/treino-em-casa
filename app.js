@@ -16,7 +16,7 @@ function avg7(){const a=S.weights.filter(x=>x.w);if(!a.length)return null;const 
 function calc(){const p=S.profile,w=lastW();const bmr=10*w+6.25*p.altura-5*p.idade+(p.sexo==='m'?5:-161),tdee=bmr*p.act;
 let def=p.ritmo*7700/7;const max=tdee*.25,capped=def>max;def=Math.min(def,max);const kcal=Math.max(tdee-def,bmr);def=tdee-kcal;
 const ref=Math.min(w,(p.meta||w)+10),prot=Math.round(ref*1.6),fat=Math.round(kcal*.25/9),carb=Math.max(0,Math.round((kcal-prot*4-fat*9)/4));
-const treino=!!S.train[today()],agua=Math.round((w*30+(treino?500:0)+(S.quente?500:0))/50)*50;
+const treino=!!S.train[today()],agua=Math.round((w*30+(treino?(S.log&&S.log[today()]?S.log[today()].min*13:500):0)+(S.quente?500:0))/50)*50;
 return{bmr:Math.round(bmr),tdee:Math.round(tdee),kcal:Math.round(kcal),def:Math.round(def),real:def*7/7700,capped,prot,fat,carb,agua,treino}}
 /* ---------- PIN ---------- */
 const hex=b=>[...new Uint8Array(b)].map(x=>pad(x.toString(16))).join('');
